@@ -1,0 +1,428 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IELTS Speaking Part 2 Simulator</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Newsreader:ital@0;1&display=swap');
+
+  :root{
+    --ink:#1a1714;
+    --paper:#f4ede1;
+    --card:#fffdf8;
+    --line:#d8cbb4;
+    --accent:#b4472f;
+    --accent-deep:#8a3421;
+    --green:#3f6b4c;
+    --muted:#8a7f6d;
+    --shadow:rgba(60,45,25,.18);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:'Newsreader',Georgia,serif;
+    background:
+      radial-gradient(120% 80% at 50% -10%, #f9f3e8 0%, var(--paper) 55%, #ece1cd 100%);
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{width:100%;max-width:620px}
+
+  .masthead{text-align:center;margin-bottom:22px}
+  .masthead .kicker{
+    font-family:'Fraunces',serif;font-weight:600;letter-spacing:.35em;
+    text-transform:uppercase;font-size:11px;color:var(--accent);
+  }
+  .masthead h1{
+    font-family:'Fraunces',serif;font-weight:900;font-size:30px;
+    letter-spacing:-.02em;margin-top:4px;line-height:1;
+  }
+  .masthead .sub{color:var(--muted);font-style:italic;font-size:15px;margin-top:6px}
+
+  .panel{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:6px;
+    box-shadow:0 18px 40px -22px var(--shadow), 0 2px 0 var(--line);
+    padding:30px 30px 26px;
+    position:relative;
+    overflow:hidden;
+  }
+  .panel::before{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:5px;
+    background:linear-gradient(var(--accent),var(--accent-deep));
+  }
+
+  /* stage label */
+  .stage-tag{
+    display:inline-block;font-family:'Fraunces',serif;font-weight:600;
+    font-size:11px;letter-spacing:.25em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:14px;
+  }
+
+  /* cue card */
+  .cue-topic{
+    font-family:'Fraunces',serif;font-weight:900;font-size:23px;
+    line-height:1.22;letter-spacing:-.01em;margin-bottom:16px;
+  }
+  .cue-list{list-style:none}
+  .cue-list li{
+    position:relative;padding-left:22px;margin:9px 0;font-size:17px;color:#3a332a;
+  }
+  .cue-list li::before{
+    content:"";position:absolute;left:2px;top:11px;width:7px;height:7px;
+    border:1.5px solid var(--accent);border-radius:50%;
+  }
+
+  /* timer */
+  .timer-block{text-align:center;margin:8px 0 4px}
+  .timer{
+    font-family:'Fraunces',serif;font-weight:900;font-size:72px;
+    letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums;
+  }
+  .timer.warn{color:var(--accent)}
+  .timer-label{
+    font-family:'Fraunces',serif;font-weight:600;font-size:12px;
+    letter-spacing:.3em;text-transform:uppercase;color:var(--muted);margin-top:6px;
+  }
+  .ring-wrap{position:relative;width:190px;height:190px;margin:6px auto 10px}
+  .ring-wrap svg{transform:rotate(-90deg)}
+  .ring-bg{fill:none;stroke:var(--line);stroke-width:8}
+  .ring-fg{fill:none;stroke:var(--accent);stroke-width:8;stroke-linecap:round;
+    transition:stroke-dashoffset 1s linear}
+  .ring-center{
+    position:absolute;inset:0;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;
+  }
+  .ring-center .timer{font-size:46px}
+  .ring-center .timer-label{margin-top:2px;font-size:10px}
+
+  /* mic pulse */
+  .mic-dot{
+    display:inline-flex;align-items:center;gap:8px;color:var(--accent);
+    font-family:'Fraunces',serif;font-weight:600;font-size:12px;
+    letter-spacing:.2em;text-transform:uppercase;margin-top:2px;
+  }
+  .mic-dot .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);
+    animation:pulse 1.2s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(1.5)}}
+
+  /* transcript */
+  .transcript{
+    margin-top:16px;background:#faf5ea;border:1px dashed var(--line);
+    border-radius:5px;padding:14px 16px;min-height:90px;max-height:240px;
+    overflow-y:auto;font-size:16px;line-height:1.55;color:#2c2620;
+  }
+  .transcript .interim{color:var(--muted);font-style:italic}
+  .transcript.empty{color:var(--muted);font-style:italic;display:flex;align-items:center;justify-content:center}
+
+  .wordcount{
+    text-align:right;font-family:'Fraunces',serif;font-size:12px;
+    letter-spacing:.05em;color:var(--muted);margin-top:8px;
+  }
+
+  /* notes area (prep) */
+  textarea.notes{
+    width:100%;min-height:120px;margin-top:14px;resize:vertical;
+    border:1px solid var(--line);border-radius:5px;background:#faf5ea;
+    padding:12px 14px;font-family:'Newsreader',serif;font-size:16px;color:var(--ink);
+  }
+  textarea.notes:focus{outline:2px solid var(--accent);outline-offset:1px}
+
+  /* buttons */
+  .actions{display:flex;gap:12px;margin-top:22px;flex-wrap:wrap}
+  button{
+    font-family:'Fraunces',serif;font-weight:600;font-size:15px;cursor:pointer;
+    border:1px solid var(--ink);border-radius:4px;padding:13px 22px;
+    background:var(--ink);color:var(--paper);transition:transform .08s ease,box-shadow .15s;
+    letter-spacing:.02em;flex:1;min-width:130px;
+  }
+  button:hover{transform:translateY(-1px);box-shadow:0 6px 14px -6px var(--shadow)}
+  button:active{transform:translateY(0)}
+  button.ghost{background:transparent;color:var(--ink)}
+  button.accent{background:var(--accent);border-color:var(--accent)}
+  button.green{background:var(--green);border-color:var(--green)}
+  button:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+  .hint{font-size:14px;color:var(--muted);font-style:italic;margin-top:14px;text-align:center;line-height:1.5}
+  .hidden{display:none!important}
+
+  .flash{animation:flashbg .6s ease}
+  @keyframes flashbg{0%{background:#fff}40%{background:#f6e2dc}100%{background:var(--card)}}
+
+  .divider{height:1px;background:var(--line);margin:20px 0}
+
+  .copied-toast{
+    position:fixed;bottom:26px;left:50%;transform:translateX(-50%);
+    background:var(--ink);color:var(--paper);padding:11px 20px;border-radius:4px;
+    font-family:'Fraunces',serif;font-size:14px;letter-spacing:.03em;
+    opacity:0;pointer-events:none;transition:opacity .25s, transform .25s;
+  }
+  .copied-toast.show{opacity:1;transform:translateX(-50%) translateY(-4px)}
+
+  .warnbox{
+    background:#fbeee9;border:1px solid #e6c3b6;color:var(--accent-deep);
+    border-radius:5px;padding:12px 14px;font-size:14px;line-height:1.5;margin-top:14px;
+  }
+</style>
+
+<div class="wrap">
+  <div class="masthead">
+    <div class="kicker">IELTS · Speaking Part 2</div>
+    <h1>The Cue Card Room</h1>
+    <div class="sub">One minute to prepare · Two minutes to speak</div>
+  </div>
+
+  <div class="panel" id="panel">
+
+    <!-- ========== SCREEN: START ========== -->
+    <section id="screen-start">
+      <span class="stage-tag">Ready when you are</span>
+      <p style="font-size:17px;line-height:1.6;color:#3a332a">
+        You'll get a random cue card, <strong>60 seconds</strong> to make notes,
+        then <strong>2 minutes</strong> to speak. The recorder stops you at exactly
+        2:00 — just like the real test — and hands you a transcript to drop into your
+        Claude IELTS coach for grading.
+      </p>
+      <div class="warnbox" id="mic-warn">
+        Best in <strong>Chrome</strong> or <strong>Edge</strong>. Your browser will ask for
+        microphone permission — allow it so your speech can be transcribed. Nothing is
+        uploaded; transcription runs in your browser.
+      </div>
+      <div class="actions">
+        <button class="accent" onclick="startPrep()">Draw a cue card →</button>
+      </div>
+    </section>
+
+    <!-- ========== SCREEN: PREP ========== -->
+    <section id="screen-prep" class="hidden">
+      <span class="stage-tag">Preparation · make your notes</span>
+      <div class="cue-topic" id="prep-topic"></div>
+      <ul class="cue-list" id="prep-points"></ul>
+
+      <div class="timer-block">
+        <div class="timer" id="prep-timer">1:00</div>
+        <div class="timer-label">Prep time remaining</div>
+      </div>
+
+      <textarea class="notes" id="notes" placeholder="Jot quick notes / keywords here…"></textarea>
+
+      <div class="actions">
+        <button class="green" onclick="startSpeaking()">I'm ready — start speaking now →</button>
+      </div>
+      <div class="hint">Speaking begins automatically when prep time ends.</div>
+    </section>
+
+    <!-- ========== SCREEN: SPEAK ========== -->
+    <section id="screen-speak" class="hidden">
+      <span class="stage-tag">Speaking · you're on the clock</span>
+      <div class="cue-topic" id="speak-topic" style="font-size:19px"></div>
+      <ul class="cue-list" id="speak-points" style="font-size:15px"></ul>
+
+      <div class="divider"></div>
+
+      <div class="ring-wrap">
+        <svg width="190" height="190" viewBox="0 0 190 190">
+          <circle class="ring-bg" cx="95" cy="95" r="86"></circle>
+          <circle class="ring-fg" id="ring" cx="95" cy="95" r="86"></circle>
+        </svg>
+        <div class="ring-center">
+          <div class="timer" id="speak-timer">2:00</div>
+          <div class="timer-label">Speaking</div>
+        </div>
+      </div>
+
+      <div style="text-align:center">
+        <span class="mic-dot" id="mic-live"><span class="dot"></span> Listening</span>
+      </div>
+
+      <div class="transcript empty" id="live-transcript">Your words will appear here as you speak…</div>
+      <div class="wordcount" id="live-wc">0 words</div>
+
+      <div class="actions">
+        <button class="ghost" onclick="finishEarly()">Finish early</button>
+      </div>
+    </section>
+
+    <!-- ========== SCREEN: TIME'S UP ========== -->
+    <section id="screen-done" class="hidden">
+      <span class="stage-tag" id="done-tag" style="color:var(--accent)">Time's up</span>
+      <div class="cue-topic" id="done-topic" style="font-size:18px;color:var(--muted)"></div>
+
+      <div style="margin:10px 0 4px;font-family:'Fraunces';font-weight:600;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)">
+        Your transcript
+      </div>
+      <div class="transcript" id="final-transcript" style="max-height:280px"></div>
+      <div class="wordcount" id="final-wc">0 words</div>
+
+      <div class="warnbox" style="background:#f0f2ec;border-color:#c9d3c0;color:var(--green)">
+        <strong>Next step:</strong> Copy this, paste it to Claude, and say
+        <em>"grade this Part 2 — band + upgrade"</em>. Your <strong>ielts-coach</strong> skill takes over from there.
+      </div>
+
+      <div class="actions">
+        <button class="green" onclick="copyTranscript()">Copy transcript</button>
+        <button class="ghost" onclick="reset()">New cue card</button>
+      </div>
+      <div class="hint" id="short-warn"></div>
+    </section>
+
+  </div>
+</div>
+
+<div class="copied-toast" id="toast">Copied — paste it to your Claude coach</div>
+
+<script>
+/* ---------- Cue card bank ---------- */
+const CARDS = [
+  {t:"Describe an activity you enjoy in your free time after work or study.",p:["What you do","Where and when you do it","Who you do it with","Explain why you enjoy it"]},
+  {t:"Describe a skill you would like to learn.",p:["What the skill is","How you would learn it","How long it might take","Explain why you want to learn it"]},
+  {t:"Describe a time when you had to use your imagination.",p:["When this happened","Why you needed to use your imagination","What you imagined or created","Explain how you felt about the result"]},
+  {t:"Describe a piece of technology you find useful.",p:["What it is","How and how often you use it","How you learned to use it","Explain why it is useful to you"]},
+  {t:"Describe a goal you want to achieve in the future.",p:["What the goal is","When you decided on it","What steps you are taking","Explain why this goal matters to you"]},
+  {t:"Describe a place you like to visit in your free time.",p:["Where it is","How often you go","What you do there","Explain why you like this place"]},
+  {t:"Describe a person who has influenced you.",p:["Who the person is","How you know them","What they did","Explain how they influenced you"]},
+  {t:"Describe a decision you made that was difficult.",p:["What the decision was","When you made it","Why it was difficult","Explain how you feel about it now"]},
+  {t:"Describe a project or task you completed successfully.",p:["What it was","What you had to do","Any problems you faced","Explain why it was successful"]},
+  {t:"Describe something you own that is important to you.",p:["What it is","How you got it","How long you've had it","Explain why it matters to you"]},
+  {t:"Describe a change you would like to make in your life.",p:["What the change is","Why you want to make it","How you would do it","Explain how it would affect you"]},
+  {t:"Describe a country you would like to visit or live in.",p:["Which country it is","Why you're interested in it","What you would do there","Explain why it appeals to you"]},
+  {t:"Describe a time you helped someone.",p:["Who you helped","What the situation was","What you did","Explain how you felt afterward"]},
+  {t:"Describe a book, film, or show you enjoyed.",p:["What it was","What it was about","When you experienced it","Explain why you enjoyed it"]},
+  {t:"Describe a habit you have that you consider good.",p:["What the habit is","When you developed it","How it helps you","Explain why you value it"]},
+];
+
+/* ---------- State ---------- */
+let current=null, prepInt=null, speakInt=null;
+let recognition=null, finalText="", interimText="", recActive=false;
+const RING_LEN = 2*Math.PI*86;
+
+/* ---------- Screen helpers ---------- */
+const S = id => document.getElementById(id);
+function show(id){
+  ["screen-start","screen-prep","screen-speak","screen-done"].forEach(s=>S(s).classList.add("hidden"));
+  S(id).classList.remove("hidden");
+}
+function fmt(sec){const m=Math.floor(sec/60),s=sec%60;return m+":"+String(s).padStart(2,"0");}
+
+/* ---------- Flow: start → prep ---------- */
+function startPrep(){
+  current = CARDS[Math.floor(Math.random()*CARDS.length)];
+  renderCard("prep-topic","prep-points");
+  S("notes").value="";
+  show("screen-prep");
+  let left=60;
+  S("prep-timer").textContent=fmt(left);
+  S("prep-timer").classList.remove("warn");
+  prepInt=setInterval(()=>{
+    left--;
+    S("prep-timer").textContent=fmt(left);
+    if(left<=10)S("prep-timer").classList.add("warn");
+    if(left<=0){clearInterval(prepInt);startSpeaking();}
+  },1000);
+}
+
+function renderCard(topicId,pointsId){
+  S(topicId).textContent=current.t;
+  const ul=S(pointsId);ul.innerHTML="";
+  current.p.forEach(pt=>{const li=document.createElement("li");li.textContent=pt;ul.appendChild(li);});
+}
+
+/* ---------- Flow: speaking ---------- */
+function startSpeaking(){
+  clearInterval(prepInt);
+  renderCard("speak-topic","speak-points");
+  finalText="";interimText="";
+  S("live-transcript").className="transcript empty";
+  S("live-transcript").textContent="Your words will appear here as you speak…";
+  S("live-wc").textContent="0 words";
+  S("ring").style.strokeDasharray=RING_LEN;
+  S("ring").style.strokeDashoffset=0;
+  show("screen-speak");
+  startRecognition();
+
+  let left=120;
+  S("speak-timer").textContent=fmt(left);
+  S("speak-timer").classList.remove("warn");
+  speakInt=setInterval(()=>{
+    left--;
+    S("speak-timer").textContent=fmt(left);
+    S("ring").style.strokeDashoffset = RING_LEN*(1-left/120);
+    if(left<=20)S("speak-timer").classList.add("warn");
+    if(left<=0){clearInterval(speakInt);endSession(false);}
+  },1000);
+}
+
+function finishEarly(){clearInterval(speakInt);endSession(true);}
+
+function endSession(early){
+  stopRecognition();
+  const text=(finalText+" "+interimText).trim();
+  S("done-tag").textContent = early ? "Finished early" : "Time's up — 2:00";
+  S("done-topic").textContent=current.t;
+  const ft=S("final-transcript");
+  if(text){ft.className="transcript";ft.textContent=text;}
+  else{ft.className="transcript empty";ft.textContent="(No speech was captured. If your mic was blocked, you can type what you said here before copying — or just retry in Chrome.)";ft.contentEditable=true;}
+  const wc=text?text.split(/\s+/).filter(Boolean).length:0;
+  S("final-wc").textContent=wc+" words";
+  const sw=S("short-warn");
+  if(wc>0&&wc<160)sw.textContent="⚠ A full 2-minute Part 2 answer is usually 260–320 words. "+wc+" suggests you finished early or spoke slowly — aim to fill the time.";
+  else if(wc>=160)sw.textContent="Good length — that's in the range examiners expect for a full 2 minutes.";
+  else sw.textContent="";
+  show("screen-done");
+}
+
+/* ---------- Speech recognition ---------- */
+function startRecognition(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){
+    S("mic-live").innerHTML="⚠ Speech recognition not supported — type your answer on the next screen";
+    return;
+  }
+  recognition=new SR();
+  recognition.continuous=true;
+  recognition.interimResults=true;
+  recognition.lang="en-US";
+  recognition.onresult=e=>{
+    interimText="";
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      const r=e.results[i];
+      if(r.isFinal)finalText+=r[0].transcript+" ";
+      else interimText+=r[0].transcript;
+    }
+    paintTranscript();
+  };
+  recognition.onerror=e=>{
+    if(e.error==="not-allowed"||e.error==="service-not-allowed"){
+      S("mic-live").innerHTML="⚠ Mic blocked — you can type your answer when time's up";
+    }
+  };
+  recognition.onend=()=>{ if(recActive){try{recognition.start();}catch(_){}} };
+  try{recognition.start();recActive=true;}catch(_){}
+}
+function stopRecognition(){recActive=false;if(recognition){try{recognition.stop();}catch(_){}}}
+
+function paintTranscript(){
+  const box=S("live-transcript");
+  box.className="transcript";
+  box.innerHTML = escapeHtml(finalText) + '<span class="interim">'+escapeHtml(interimText)+'</span>';
+  box.scrollTop=box.scrollHeight;
+  const wc=(finalText+interimText).trim().split(/\s+/).filter(Boolean).length;
+  S("live-wc").textContent=wc+" words";
+}
+function escapeHtml(s){return s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
+
+/* ---------- Copy / reset ---------- */
+function copyTranscript(){
+  const t=S("final-transcript").innerText.trim();
+  const payload="IELTS Speaking Part 2 — please grade (band per criterion) and give an 8.5+ upgrade.\n\nCUE CARD: "+current.t+"\n\nMY ANSWER (2-min transcript):\n"+t;
+  navigator.clipboard.writeText(payload).then(showToast,()=>{
+    const ta=document.createElement("textarea");ta.value=payload;document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove();showToast();
+  });
+}
+function showToast(){const t=S("toast");t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2200);}
+function reset(){clearInterval(prepInt);clearInterval(speakInt);stopRecognition();show("screen-start");}
+</script>
