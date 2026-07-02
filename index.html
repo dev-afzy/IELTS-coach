@@ -132,6 +132,17 @@
   }
   textarea.notes:focus{outline:2px solid var(--accent);outline-offset:1px}
 
+  /* notes carried onto the speaking screen */
+  .notes-ref{
+    margin-top:14px;background:#faf5ea;border-left:3px solid var(--accent);
+    border-radius:5px;padding:12px 14px;
+  }
+  .notes-ref-label{
+    font-family:'Fraunces',serif;font-weight:600;font-size:11px;
+    letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;
+  }
+  .notes-ref-body{font-size:16px;line-height:1.5;color:#2c2620;white-space:pre-wrap;word-break:break-word}
+
   /* buttons */
   .actions{display:flex;gap:12px;margin-top:22px;flex-wrap:wrap}
   button{
@@ -221,6 +232,11 @@
       <span class="stage-tag">Speaking · you're on the clock</span>
       <div class="cue-topic" id="speak-topic" style="font-size:19px"></div>
       <ul class="cue-list" id="speak-points" style="font-size:15px"></ul>
+
+      <div class="notes-ref hidden" id="speak-notes">
+        <div class="notes-ref-label">Your notes</div>
+        <div class="notes-ref-body" id="speak-notes-body"></div>
+      </div>
 
       <div class="divider"></div>
 
@@ -335,6 +351,9 @@ function renderCard(topicId,pointsId){
 function startSpeaking(){
   clearInterval(prepInt);
   renderCard("speak-topic","speak-points");
+  const noteText=S("notes").value.trim();
+  if(noteText){S("speak-notes-body").textContent=noteText;S("speak-notes").classList.remove("hidden");}
+  else{S("speak-notes").classList.add("hidden");}
   finalText="";interimText="";
   S("live-transcript").className="transcript empty";
   S("live-transcript").textContent="Your words will appear here as you speak…";
