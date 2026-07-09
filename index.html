@@ -1,6 +1,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>IELTS Speaking Part 2 Simulator</title>
+<title>IELTS Speaking Part 2 & 3 Simulator</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Newsreader:ital@0;1&display=swap');
 
@@ -143,6 +143,28 @@
   }
   .notes-ref-body{font-size:16px;line-height:1.5;color:#2c2620;white-space:pre-wrap;word-break:break-word}
 
+  /* part 3 follow-up discussion */
+  .timer.sm{font-size:40px}
+  .p3-progress{
+    font-family:'Fraunces',serif;font-weight:600;font-size:11px;
+    letter-spacing:.25em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;
+  }
+  .p3-question{
+    font-family:'Fraunces',serif;font-weight:900;font-size:21px;
+    line-height:1.28;letter-spacing:-.01em;margin-bottom:6px;
+  }
+
+  /* done-screen transcript sections */
+  .tx-label{
+    font-family:'Fraunces',serif;font-weight:600;font-size:12px;
+    letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin:4px 0 4px;
+  }
+  .tx-body{white-space:pre-wrap}
+  .qa{margin-top:12px}
+  .qa-q{font-weight:600;color:var(--accent-deep)}
+  .qa-a{margin-top:2px;color:#2c2620;white-space:pre-wrap}
+  .qa-a.empty{color:var(--muted);font-style:italic}
+
   /* buttons */
   .actions{display:flex;gap:12px;margin-top:22px;flex-wrap:wrap}
   button{
@@ -182,9 +204,9 @@
 
 <div class="wrap">
   <div class="masthead">
-    <div class="kicker">IELTS · Speaking Part 2</div>
+    <div class="kicker">IELTS · Speaking Parts 2 & 3</div>
     <h1>The Cue Card Room</h1>
-    <div class="sub">One minute to prepare · Two minutes to speak</div>
+    <div class="sub">One minute to prepare · Two minutes to speak · Then the discussion</div>
   </div>
 
   <div class="panel" id="panel">
@@ -195,8 +217,10 @@
       <p style="font-size:17px;line-height:1.6;color:#3a332a">
         You'll get a random cue card, <strong>60 seconds</strong> to make notes,
         then <strong>2 minutes</strong> to speak. The recorder stops you at exactly
-        2:00 — just like the real test — and hands you a transcript to drop into your
-        Claude IELTS coach for grading.
+        2:00 — just like the real test — then moves straight into
+        <strong>Part 3</strong>: five follow-up discussion questions on the same
+        topic. At the end you get one transcript to drop into your Claude IELTS
+        coach for grading.
       </p>
       <div class="warnbox" id="mic-warn">
         Best in <strong>Chrome</strong> or <strong>Edge</strong>. Your browser will ask for
@@ -263,6 +287,35 @@
       </div>
     </section>
 
+    <!-- ========== SCREEN: PART 3 (DISCUSSION) ========== -->
+    <section id="screen-part3" class="hidden">
+      <span class="stage-tag">Part 3 · Discussion</span>
+      <div class="p3-progress" id="p3-progress">Question 1 of 5</div>
+      <div class="p3-question" id="p3-question"></div>
+
+      <div class="notes-ref hidden" id="p3-topic-ref">
+        <div class="notes-ref-label">On the topic of</div>
+        <div class="notes-ref-body" id="p3-topic-body"></div>
+      </div>
+
+      <div class="timer-block">
+        <div class="timer sm" id="p3-timer">0:45</div>
+        <div class="timer-label">Suggested time · answer as long as you like</div>
+      </div>
+
+      <div style="text-align:center">
+        <span class="mic-dot" id="p3-mic-live"><span class="dot"></span> Listening</span>
+      </div>
+
+      <div class="transcript empty" id="p3-transcript">Your answer will appear here as you speak…</div>
+      <div class="wordcount" id="p3-wc">0 words</div>
+
+      <div class="actions">
+        <button class="green" id="p3-next" onclick="nextP3()">Next question →</button>
+      </div>
+      <div class="hint">Answer naturally, then tap the button to move on — just like the examiner would.</div>
+    </section>
+
     <!-- ========== SCREEN: TIME'S UP ========== -->
     <section id="screen-done" class="hidden">
       <span class="stage-tag" id="done-tag" style="color:var(--accent)">Time's up</span>
@@ -276,7 +329,7 @@
 
       <div class="warnbox" style="background:#f0f2ec;border-color:#c9d3c0;color:var(--green)">
         <strong>Next step:</strong> Copy this, paste it to Claude, and say
-        <em>"grade this Part 2 — band + upgrade"</em>. Your <strong>ielts-coach</strong> skill takes over from there.
+        <em>"grade this Speaking Part 2 &amp; 3 — band + upgrade"</em>. Your <strong>ielts-coach</strong> skill takes over from there.
       </div>
 
       <div class="actions">
@@ -294,32 +347,50 @@
 <script>
 /* ---------- Cue card bank ---------- */
 const CARDS = [
-  {t:"Describe an activity you enjoy in your free time after work or study.",p:["What you do","Where and when you do it","Who you do it with","Explain why you enjoy it"]},
-  {t:"Describe a skill you would like to learn.",p:["What the skill is","How you would learn it","How long it might take","Explain why you want to learn it"]},
-  {t:"Describe a time when you had to use your imagination.",p:["When this happened","Why you needed to use your imagination","What you imagined or created","Explain how you felt about the result"]},
-  {t:"Describe a piece of technology you find useful.",p:["What it is","How and how often you use it","How you learned to use it","Explain why it is useful to you"]},
-  {t:"Describe a goal you want to achieve in the future.",p:["What the goal is","When you decided on it","What steps you are taking","Explain why this goal matters to you"]},
-  {t:"Describe a place you like to visit in your free time.",p:["Where it is","How often you go","What you do there","Explain why you like this place"]},
-  {t:"Describe a person who has influenced you.",p:["Who the person is","How you know them","What they did","Explain how they influenced you"]},
-  {t:"Describe a decision you made that was difficult.",p:["What the decision was","When you made it","Why it was difficult","Explain how you feel about it now"]},
-  {t:"Describe a project or task you completed successfully.",p:["What it was","What you had to do","Any problems you faced","Explain why it was successful"]},
-  {t:"Describe something you own that is important to you.",p:["What it is","How you got it","How long you've had it","Explain why it matters to you"]},
-  {t:"Describe a change you would like to make in your life.",p:["What the change is","Why you want to make it","How you would do it","Explain how it would affect you"]},
-  {t:"Describe a country you would like to visit or live in.",p:["Which country it is","Why you're interested in it","What you would do there","Explain why it appeals to you"]},
-  {t:"Describe a time you helped someone.",p:["Who you helped","What the situation was","What you did","Explain how you felt afterward"]},
-  {t:"Describe a book, film, or show you enjoyed.",p:["What it was","What it was about","When you experienced it","Explain why you enjoyed it"]},
-  {t:"Describe a habit you have that you consider good.",p:["What the habit is","When you developed it","How it helps you","Explain why you value it"]},
+  {t:"Describe an activity you enjoy in your free time after work or study.",p:["What you do","Where and when you do it","Who you do it with","Explain why you enjoy it"],
+   f:["Why do you think leisure time has become so important to people today?","Do you think people have more or less free time than they did in the past?","How do the ways young people and older people spend their free time differ?","Should employers be responsible for helping their staff achieve a good work-life balance?","Do you think the leisure activities people choose will change much in the future?"]},
+  {t:"Describe a skill you would like to learn.",p:["What the skill is","How you would learn it","How long it might take","Explain why you want to learn it"],
+   f:["Why do you think some skills are harder to learn as an adult than as a child?","How has technology changed the way people learn new skills today?","Do you think practical skills or academic knowledge is more valuable in the workplace? Why?","Should governments do more to help people retrain for new careers?","Which kinds of skills do you think will be most in demand in the future?"]},
+  {t:"Describe a time when you had to use your imagination.",p:["When this happened","Why you needed to use your imagination","What you imagined or created","Explain how you felt about the result"],
+   f:["Why is imagination important in fields such as science and business, not just the arts?","Do you think schools do enough to encourage children's creativity?","Are some people naturally more creative than others, or can creativity be taught?","How can creativity benefit a country's economy?","Do you think technology helps or limits people's imagination?"]},
+  {t:"Describe a piece of technology you find useful.",p:["What it is","How and how often you use it","How you learned to use it","Explain why it is useful to you"],
+   f:["What impact has technology had on the way families communicate?","Do you think people rely too much on technology in daily life?","How has technology changed the workplace over the last twenty years?","Are there any disadvantages to children using technology from a young age?","What developments in technology do you expect to see in the next decade?"]},
+  {t:"Describe a goal you want to achieve in the future.",p:["What the goal is","When you decided on it","What steps you are taking","Explain why this goal matters to you"],
+   f:["Why do you think it is important for people to set goals in life?","Do you think young people today are more ambitious than in the past?","Is it better to have one big goal or several smaller ones? Why?","How does society benefit when individuals achieve their personal goals?","Do you think schools should teach students how to set and plan for goals?"]},
+  {t:"Describe a place you like to visit in your free time.",p:["Where it is","How often you go","What you do there","Explain why you like this place"],
+   f:["Why do you think people need places to relax away from home and work?","How have public spaces in cities changed over the past few decades?","Do you think governments should invest more in public parks and recreation areas?","Are people visiting natural places more or less than they used to? Why?","How might the places people go to relax change in the future?"]},
+  {t:"Describe a person who has influenced you.",p:["Who the person is","How you know them","What they did","Explain how they influenced you"],
+   f:["Why do you think role models are important for young people?","Do you think celebrities make good role models? Why or why not?","How has the kind of person young people admire changed over time?","Is it better to be influenced by family members or by public figures?","Can a single person really bring about change in society? Why?"]},
+  {t:"Describe a decision you made that was difficult.",p:["What the decision was","When you made it","Why it was difficult","Explain how you feel about it now"],
+   f:["Why do some people find it harder than others to make decisions?","Do you think important decisions should be made quickly or slowly?","How much should people rely on the advice of others when making big decisions?","Are decisions made by groups usually better than those made by individuals?","How has access to information changed the way people make decisions?"]},
+  {t:"Describe a project or task you completed successfully.",p:["What it was","What you had to do","Any problems you faced","Explain why it was successful"],
+   f:["How do you think people define success differently?","Do you think teamwork or individual effort is more important for completing a project?","Why do some projects fail even when people work hard on them?","How important is planning to the success of a task?","Do you think people learn more from success or from failure?"]},
+  {t:"Describe something you own that is important to you.",p:["What it is","How you got it","How long you've had it","Explain why it matters to you"],
+   f:["Why do some possessions have sentimental rather than financial value?","Do you think people today own too many things?","How have people's attitudes towards owning things changed over time?","Is it better to spend money on possessions or on experiences? Why?","Do you think people will own fewer physical things in the future?"]},
+  {t:"Describe a change you would like to make in your life.",p:["What the change is","Why you want to make it","How you would do it","Explain how it would affect you"],
+   f:["Why do many people find it difficult to change their habits?","Do you think people are more open to change when they are young?","How does society encourage or discourage people from changing?","Is change always a good thing? Why or why not?","What role does technology play in changing the way people live?"]},
+  {t:"Describe a country you would like to visit or live in.",p:["Which country it is","Why you're interested in it","What you would do there","Explain why it appeals to you"],
+   f:["Why do you think people are interested in travelling to other countries?","How does travel help people understand other cultures?","Do you think tourism has more benefits or drawbacks for a country?","Should people learn about a country's culture before visiting it?","How do you think international travel will change in the future?"]},
+  {t:"Describe a time you helped someone.",p:["Who you helped","What the situation was","What you did","Explain how you felt afterward"],
+   f:["Why do you think some people are more willing to help others than others are?","Do you think people help strangers less than they did in the past?","How can schools encourage children to help others?","Is it the responsibility of governments or of individuals to help those in need?","Do you think volunteering should be a compulsory part of education?"]},
+  {t:"Describe a book, film, or show you enjoyed.",p:["What it was","What it was about","When you experienced it","Explain why you enjoyed it"],
+   f:["Why do you think people enjoy stories so much?","How have the ways people watch films and read books changed in recent years?","Do you think films and books can teach us important lessons? How?","Are traditional printed books likely to disappear in the future? Why?","Do you think entertainment has too much influence on young people?"]},
+  {t:"Describe a habit you have that you consider good.",p:["What the habit is","When you developed it","How it helps you","Explain why you value it"],
+   f:["Why do you think good habits are so difficult to form?","How do the habits people develop as children affect their adult lives?","Do you think schools should do more to teach children healthy habits?","How does the society around us influence the habits we have?","Do you think people's daily habits have changed much over the last generation?"]},
 ];
 
 /* ---------- State ---------- */
-let current=null, prepInt=null, speakInt=null;
+let current=null, prepInt=null, speakInt=null, p3Int=null;
 let recognition=null, finalText="", interimText="", recActive=false;
+let part2Text="", p3Index=0, p3Answers=[];
+let TXTARGET={box:"live-transcript",wc:"live-wc"};   // active transcript box for paintTranscript()
 const RING_LEN = 2*Math.PI*86;
+const P3_GUIDE = 45;   // suggested seconds per Part 3 answer (soft, no cutoff)
 
 /* ---------- Screen helpers ---------- */
 const S = id => document.getElementById(id);
 function show(id){
-  ["screen-start","screen-prep","screen-speak","screen-done"].forEach(s=>S(s).classList.add("hidden"));
+  ["screen-start","screen-prep","screen-speak","screen-part3","screen-done"].forEach(s=>S(s).classList.add("hidden"));
   S(id).classList.remove("hidden");
 }
 function fmt(sec){const m=Math.floor(sec/60),s=sec%60;return m+":"+String(s).padStart(2,"0");}
@@ -355,6 +426,7 @@ function startSpeaking(){
   if(noteText){S("speak-notes-body").textContent=noteText;S("speak-notes").classList.remove("hidden");}
   else{S("speak-notes").classList.add("hidden");}
   finalText="";interimText="";
+  TXTARGET={box:"live-transcript",wc:"live-wc"};
   S("live-transcript").className="transcript empty";
   S("live-transcript").textContent="Your words will appear here as you speak…";
   S("live-wc").textContent="0 words";
@@ -371,25 +443,92 @@ function startSpeaking(){
     S("speak-timer").textContent=fmt(left);
     S("ring").style.strokeDashoffset = RING_LEN*(1-left/120);
     if(left<=20)S("speak-timer").classList.add("warn");
-    if(left<=0){clearInterval(speakInt);endSession(false);}
+    if(left<=0){clearInterval(speakInt);endPart2(false);}
   },1000);
 }
 
-function finishEarly(){clearInterval(speakInt);endSession(true);}
+function finishEarly(){clearInterval(speakInt);endPart2(true);}
 
-function endSession(early){
+/* ---------- Flow: Part 2 ends → Part 3 begins ---------- */
+function endPart2(){
+  clearInterval(speakInt);
+  part2Text=(finalText+" "+interimText).trim();
+  startPart3();
+}
+
+function startPart3(){
+  p3Index=0; p3Answers=[];
+  S("p3-topic-body").textContent=current.t;
+  S("p3-topic-ref").classList.remove("hidden");
+  show("screen-part3");
+  renderP3Question();
+}
+
+function renderP3Question(){
+  clearInterval(p3Int);
+  finalText="";interimText="";
+  TXTARGET={box:"p3-transcript",wc:"p3-wc"};
+  const total=current.f.length;
+  S("p3-progress").textContent="Question "+(p3Index+1)+" of "+total;
+  S("p3-question").textContent=current.f[p3Index];
+  S("p3-transcript").className="transcript empty";
+  S("p3-transcript").textContent="Your answer will appear here as you speak…";
+  S("p3-wc").textContent="0 words";
+  const isLast = p3Index===total-1;
+  S("p3-next").textContent = isLast ? "Finish & see transcript →" : "Next question →";
+
+  let left=P3_GUIDE;
+  const tEl=S("p3-timer");
+  tEl.textContent=fmt(left);
+  tEl.classList.remove("warn");
+  p3Int=setInterval(()=>{
+    left--;
+    if(left<=0){ clearInterval(p3Int); tEl.textContent="0:00"; tEl.classList.add("warn"); return; }
+    tEl.textContent=fmt(left);
+    if(left<=10)tEl.classList.add("warn");
+  },1000);
+}
+
+function nextP3(){
+  clearInterval(p3Int);
+  p3Answers.push({q:current.f[p3Index], a:(finalText+" "+interimText).trim()});
+  p3Index++;
+  if(p3Index>=current.f.length) endSpeaking();
+  else renderP3Question();
+}
+
+/* ---------- Flow: build the final combined transcript ---------- */
+function endSpeaking(){
   stopRecognition();
-  const text=(finalText+" "+interimText).trim();
-  S("done-tag").textContent = early ? "Finished early" : "Time's up — 2:00";
+  S("done-tag").textContent="Speaking test complete";
   S("done-topic").textContent=current.t;
+
+  const anyAnswer = p3Answers.some(x=>x.a);
   const ft=S("final-transcript");
-  if(text){ft.className="transcript";ft.textContent=text;}
-  else{ft.className="transcript empty";ft.textContent="(No speech was captured. If your mic was blocked, you can type what you said here before copying — or just retry in Chrome.)";ft.contentEditable=true;}
-  const wc=text?text.split(/\s+/).filter(Boolean).length:0;
-  S("final-wc").textContent=wc+" words";
+  if(part2Text || anyAnswer){
+    ft.className="transcript";
+    ft.contentEditable=false;
+    let html='<div class="tx-label">Part 2 · 2-minute answer</div>';
+    html+='<div class="tx-body">'+(part2Text?escapeHtml(part2Text):'<span class="qa-a empty">(no speech captured)</span>')+'</div>';
+    html+='<div class="tx-label" style="margin-top:16px">Part 3 · Discussion</div>';
+    p3Answers.forEach((x,i)=>{
+      html+='<div class="qa"><div class="qa-q">Q'+(i+1)+": "+escapeHtml(x.q)+'</div>';
+      html+= x.a ? '<div class="qa-a">'+escapeHtml(x.a)+'</div>'
+                 : '<div class="qa-a empty">(no answer captured)</div>';
+      html+='</div>';
+    });
+    ft.innerHTML=html;
+  } else {
+    ft.className="transcript empty";
+    ft.textContent="(No speech was captured. If your mic was blocked, retry in Chrome or Edge over HTTPS.)";
+    ft.contentEditable=false;
+  }
+
+  const p2wc=part2Text?part2Text.split(/\s+/).filter(Boolean).length:0;
+  S("final-wc").textContent="Part 2: "+p2wc+" words";
   const sw=S("short-warn");
-  if(wc>0&&wc<160)sw.textContent="⚠ A full 2-minute Part 2 answer is usually 260–320 words. "+wc+" suggests you finished early or spoke slowly — aim to fill the time.";
-  else if(wc>=160)sw.textContent="Good length — that's in the range examiners expect for a full 2 minutes.";
+  if(p2wc>0&&p2wc<160)sw.textContent="⚠ A full 2-minute Part 2 answer is usually 260–320 words. "+p2wc+" suggests you finished early or spoke slowly — aim to fill the time.";
+  else if(p2wc>=160)sw.textContent="Good Part 2 length — that's in the range examiners expect for a full 2 minutes.";
   else sw.textContent="";
   show("screen-done");
 }
@@ -398,7 +537,7 @@ function endSession(early){
 function startRecognition(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SR){
-    S("mic-live").innerHTML="⚠ Speech recognition not supported — type your answer on the next screen";
+    setMicStatus("⚠ Speech recognition not supported — best in Chrome or Edge");
     return;
   }
   recognition=new SR();
@@ -416,32 +555,39 @@ function startRecognition(){
   };
   recognition.onerror=e=>{
     if(e.error==="not-allowed"||e.error==="service-not-allowed"){
-      S("mic-live").innerHTML="⚠ Mic blocked — you can type your answer when time's up";
+      setMicStatus("⚠ Mic blocked — allow microphone access and retry in Chrome or Edge");
     }
   };
   recognition.onend=()=>{ if(recActive){try{recognition.start();}catch(_){}} };
   try{recognition.start();recActive=true;}catch(_){}
 }
+function setMicStatus(html){["mic-live","p3-mic-live"].forEach(id=>{const el=S(id);if(el)el.innerHTML=html;});}
 function stopRecognition(){recActive=false;if(recognition){try{recognition.stop();}catch(_){}}}
 
 function paintTranscript(){
-  const box=S("live-transcript");
+  const box=S(TXTARGET.box);
   box.className="transcript";
   box.innerHTML = escapeHtml(finalText) + '<span class="interim">'+escapeHtml(interimText)+'</span>';
   box.scrollTop=box.scrollHeight;
   const wc=(finalText+interimText).trim().split(/\s+/).filter(Boolean).length;
-  S("live-wc").textContent=wc+" words";
+  S(TXTARGET.wc).textContent=wc+" words";
 }
 function escapeHtml(s){return s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
 
 /* ---------- Copy / reset ---------- */
 function copyTranscript(){
-  const t=S("final-transcript").innerText.trim();
-  const payload="IELTS Speaking Part 2 — please grade (band per criterion) and give an 8.5+ upgrade.\n\nCUE CARD: "+current.t+"\n\nMY ANSWER (2-min transcript):\n"+t;
+  let payload="IELTS Speaking Parts 2 & 3 — please grade (band per criterion) and give an 8.5+ upgrade.\n\n";
+  payload+="CUE CARD (Part 2): "+current.t+"\n\n";
+  payload+="PART 2 ANSWER (2-min transcript):\n"+(part2Text||"(no speech captured)")+"\n\n";
+  payload+="PART 3 — FOLLOW-UP DISCUSSION:\n";
+  p3Answers.forEach((x,i)=>{
+    payload+="Q"+(i+1)+": "+x.q+"\nA"+(i+1)+": "+(x.a||"(no answer captured)")+"\n\n";
+  });
+  payload=payload.trim();
   navigator.clipboard.writeText(payload).then(showToast,()=>{
     const ta=document.createElement("textarea");ta.value=payload;document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove();showToast();
   });
 }
 function showToast(){const t=S("toast");t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2200);}
-function reset(){clearInterval(prepInt);clearInterval(speakInt);stopRecognition();show("screen-start");}
+function reset(){clearInterval(prepInt);clearInterval(speakInt);clearInterval(p3Int);stopRecognition();part2Text="";p3Index=0;p3Answers=[];show("screen-start");}
 </script>
