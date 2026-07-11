@@ -6,6 +6,7 @@ strip at the top of each page.
 
 - **[Speaking](index.html)** — Parts 2 & 3 (cue card + follow-up discussion)
 - **[Writing](writing.html)** — Academic Task 1 & Task 2
+- **[Reading](reading.html)** — Academic, 3 passages / 40 questions, instantly self-scored
 
 ## Speaking module (`index.html`)
 
@@ -27,12 +28,23 @@ IELTS **Academic** Writing under real conditions.
 - Absolute-deadline timer with a hard stop at 0:00; work autosaves to the browser and the clock freezes if you close the tab
 - "Time's up" screen builds a `PAYLOAD v1` transcript (with word counts and under-length flags stamped in) to copy into your Claude coach
 
-### Grading
+## Reading module (`reading.html`)
 
-Both modules copy a transcript you paste into Claude, where the version-controlled
-`ielts-coach` skill (`.claude/skills/ielts-coach/SKILL.md`) grades it honestly against the
-official band criteria and shows a Band 8.5 rewrite. The Writing grading prompt is
-scenario-tested — see [tests/](tests/).
+IELTS **Academic** Reading — fully offline and **self-scored** (no AI). Reading answers are
+objectively right or wrong, so the app scores you instantly.
+
+- Full Test (3 passages, 40 questions, 60 min) or single-passage drills (~20 min)
+- Real computer-based feel: a 1–40 question palette with flag-for-review and click-to-jump, plus the same hard-stop timer and freeze-on-close resume as the other modules
+- Ten IELTS question types (True/False/Not Given, Yes/No/Not Given, multiple choice incl. multi-answer, matching headings/information/features/sentence-endings, sentence/summary/note completion, short answer)
+- Instant raw `/40` → indicative band, then a question-by-question review: your answer vs the correct one, a one-line justification, and a jump to where it's proven in the passage
+- Content lives in `reading-content.js`; scoring/band/lint in `scorer.js` (the single source shared by the page and the unit tests)
+
+## Speaking & Writing grading
+
+The Speaking and Writing modules copy a transcript you paste into Claude, where the
+version-controlled `ielts-coach` skill (`.claude/skills/ielts-coach/SKILL.md`) grades it
+honestly against the official band criteria and shows a Band 8.5 rewrite. The Writing grading
+prompt is scenario-tested; the Reading scorer has its own unit tests — see [tests/](tests/).
 
 ## Requirements
 
