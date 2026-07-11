@@ -150,8 +150,9 @@ function scoreQuestionGroup(group, responses) {
   return { marks: marks, perQuestion: per };
 }
 
+// Reading tests use `passages`, Listening tests use `parts`; both hold `groups`.
 function eachGroup(test, fn) {
-  test.passages.forEach(function (p) { (p.groups || []).forEach(fn); });
+  (test.passages || test.parts || []).forEach(function (p) { (p.groups || []).forEach(fn); });
 }
 
 // Score a whole test. Returns { raw, outOf, band, perQuestion }.
