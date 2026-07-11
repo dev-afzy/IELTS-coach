@@ -1,0 +1,811 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IELTS Academic Writing Room</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Newsreader:ital@0;1&display=swap');
+
+  :root{
+    --ink:#1a1714; --paper:#f4ede1; --card:#fffdf8; --line:#d8cbb4;
+    --accent:#b4472f; --accent-deep:#8a3421; --green:#3f6b4c; --muted:#8a7f6d;
+    --shadow:rgba(60,45,25,.18);
+    --c1:#b4472f; --c2:#3f6b4c; --c3:#8a6d3b; --c4:#41607a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{min-height:100%}
+  body{
+    font-family:'Newsreader',Georgia,serif;
+    background:radial-gradient(120% 80% at 50% -10%, #f9f3e8 0%, var(--paper) 55%, #ece1cd 100%);
+    color:var(--ink);min-height:100vh;display:flex;flex-direction:column;align-items:center;
+    padding:24px;-webkit-font-smoothing:antialiased;
+  }
+  .wrap{width:100%;max-width:760px}
+
+  /* nav shared between modules */
+  .nav{display:flex;gap:8px;justify-content:center;margin-bottom:16px}
+  .nav a{
+    font-family:'Fraunces',serif;font-weight:600;font-size:12px;letter-spacing:.12em;
+    text-transform:uppercase;text-decoration:none;color:var(--muted);
+    border:1px solid var(--line);border-radius:999px;padding:7px 15px;background:var(--card);
+  }
+  .nav a.active{color:var(--paper);background:var(--ink);border-color:var(--ink)}
+
+  .masthead{text-align:center;margin-bottom:20px}
+  .masthead .kicker{font-family:'Fraunces',serif;font-weight:600;letter-spacing:.35em;
+    text-transform:uppercase;font-size:11px;color:var(--accent)}
+  .masthead h1{font-family:'Fraunces',serif;font-weight:900;font-size:30px;letter-spacing:-.02em;margin-top:4px;line-height:1}
+  .masthead .sub{color:var(--muted);font-style:italic;font-size:15px;margin-top:6px}
+
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:6px;
+    box-shadow:0 18px 40px -22px var(--shadow), 0 2px 0 var(--line);
+    padding:28px 30px 26px;position:relative;overflow:hidden}
+  .panel::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;
+    background:linear-gradient(var(--accent),var(--accent-deep))}
+
+  .stage-tag{display:inline-block;font-family:'Fraunces',serif;font-weight:600;font-size:11px;
+    letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+
+  p.lede{font-size:17px;line-height:1.6;color:#3a332a}
+
+  /* mode chooser */
+  .modes{display:flex;flex-direction:column;gap:12px;margin-top:20px}
+  .mode-btn{
+    text-align:left;border:1px solid var(--line);border-radius:6px;background:#faf5ea;
+    padding:16px 18px;cursor:pointer;transition:transform .08s ease,box-shadow .15s,border-color .15s}
+  .mode-btn:hover{transform:translateY(-1px);box-shadow:0 8px 18px -10px var(--shadow);border-color:var(--accent)}
+  .mode-btn .mt{font-family:'Fraunces',serif;font-weight:900;font-size:19px}
+  .mode-btn .md{color:var(--muted);font-size:15px;margin-top:3px}
+
+  .warnbox{background:#fbeee9;border:1px solid #e6c3b6;color:var(--accent-deep);
+    border-radius:5px;padding:12px 14px;font-size:14px;line-height:1.5;margin-top:16px}
+  .resumebox{background:#f0f2ec;border:1px solid #c9d3c0;color:var(--green);
+    border-radius:5px;padding:14px 16px;font-size:15px;line-height:1.5;margin-bottom:16px}
+  .resumebox .actions{margin-top:10px}
+
+  /* writing screen */
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+  .tabs{display:flex;gap:6px}
+  .tab{font-family:'Fraunces',serif;font-weight:600;font-size:13px;letter-spacing:.06em;
+    border:1px solid var(--line);background:#faf5ea;color:var(--muted);border-radius:5px;padding:8px 14px;cursor:pointer}
+  .tab.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .tab .dot{font-size:11px;opacity:.8}
+
+  .clock{font-family:'Fraunces',serif;font-weight:900;font-size:30px;letter-spacing:-.02em;
+    font-variant-numeric:tabular-nums;line-height:1}
+  .clock.warn{color:var(--accent)}
+  .clock.danger{color:#b00020;animation:flashc .8s steps(2,jump-none) infinite}
+  @keyframes flashc{50%{opacity:.4}}
+  .clock-label{font-family:'Fraunces',serif;font-weight:600;font-size:10px;letter-spacing:.25em;
+    text-transform:uppercase;color:var(--muted);text-align:right;margin-top:2px}
+
+  .task-prompt{font-family:'Fraunces',serif;font-weight:900;font-size:19px;line-height:1.3;margin:6px 0 12px}
+  .task-instr{font-size:14px;color:var(--muted);font-style:italic;margin-bottom:12px}
+  .visual{border:1px solid var(--line);border-radius:6px;background:#fff;padding:14px;margin-bottom:14px;overflow-x:auto}
+  .visual svg{display:block;max-width:100%;height:auto;margin:0 auto}
+  .visual table{border-collapse:collapse;width:100%;font-size:14px}
+  .visual caption{font-family:'Fraunces',serif;font-weight:600;font-size:14px;margin-bottom:8px;text-align:left}
+  .visual th,.visual td{border:1px solid var(--line);padding:7px 10px;text-align:center}
+  .visual th{background:#faf5ea;font-family:'Fraunces',serif}
+  .visual td:first-child,.visual th:first-child{text-align:left}
+  .svg-cap{font-family:'Fraunces',serif;font-weight:600;font-size:14px;margin-bottom:8px}
+  .svg-sub{fill:#3a332a;font-family:'Newsreader',serif}
+
+  textarea.essay{width:100%;min-height:300px;resize:vertical;border:1px solid var(--line);border-radius:6px;
+    background:#fffef9;padding:14px 16px;font-family:'Newsreader',serif;font-size:16px;line-height:1.6;color:var(--ink)}
+  textarea.essay:focus{outline:2px solid var(--accent);outline-offset:1px}
+
+  .wcbar{display:flex;justify-content:space-between;align-items:center;margin-top:8px;
+    font-family:'Fraunces',serif;font-size:13px;color:var(--muted)}
+  .wcbar .count{font-weight:600}
+  .wcbar .count.under{color:var(--accent)}
+  .wcbar .count.ok{color:var(--green)}
+
+  .actions{display:flex;gap:12px;margin-top:20px;flex-wrap:wrap}
+  button{font-family:'Fraunces',serif;font-weight:600;font-size:15px;cursor:pointer;border:1px solid var(--ink);
+    border-radius:4px;padding:12px 20px;background:var(--ink);color:var(--paper);
+    transition:transform .08s ease,box-shadow .15s;letter-spacing:.02em}
+  button:hover{transform:translateY(-1px);box-shadow:0 6px 14px -6px var(--shadow)}
+  button.ghost{background:transparent;color:var(--ink)}
+  button.accent{background:var(--accent);border-color:var(--accent)}
+  button.green{background:var(--green);border-color:var(--green)}
+  button.grow{flex:1;min-width:150px}
+  button:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+  .hint{font-size:14px;color:var(--muted);font-style:italic;margin-top:14px;text-align:center;line-height:1.5}
+  .hidden{display:none!important}
+  .divider{height:1px;background:var(--line);margin:18px 0}
+
+  /* done screen */
+  .tx-label{font-family:'Fraunces',serif;font-weight:600;font-size:12px;letter-spacing:.15em;
+    text-transform:uppercase;color:var(--accent);margin:14px 0 4px}
+  .payload{background:#faf5ea;border:1px dashed var(--line);border-radius:6px;padding:14px 16px;
+    font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;line-height:1.5;color:#2c2620;
+    white-space:pre-wrap;max-height:340px;overflow-y:auto}
+  .stat{display:inline-block;font-family:'Fraunces',serif;font-size:13px;color:var(--muted);margin-right:16px}
+  .stat b{color:var(--ink)}
+  .stat.under b{color:var(--accent)}
+
+  .copied-toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:var(--ink);
+    color:var(--paper);padding:11px 20px;border-radius:4px;font-family:'Fraunces',serif;font-size:14px;
+    letter-spacing:.03em;opacity:0;pointer-events:none;transition:opacity .25s, transform .25s}
+  .copied-toast.show{opacity:1;transform:translateX(-50%) translateY(-4px)}
+
+  .selftest{position:fixed;top:10px;right:10px;background:var(--ink);color:var(--paper);
+    font-family:ui-monospace,monospace;font-size:12px;padding:10px 12px;border-radius:6px;white-space:pre;z-index:50;max-width:90vw;overflow:auto}
+</style>
+
+<div class="wrap">
+  <nav class="nav">
+    <a href="index.html">Speaking</a>
+    <a href="writing.html" class="active">Writing</a>
+  </nav>
+
+  <div class="masthead">
+    <div class="kicker">IELTS · Academic Writing</div>
+    <h1>The Writing Room</h1>
+    <div class="sub">Task 1 &amp; Task 2 · on the clock, just like test day</div>
+  </div>
+
+  <div class="panel" id="panel">
+
+    <!-- ========== START ========== -->
+    <section id="screen-start">
+      <div class="resumebox hidden" id="resume-box">
+        <strong>You have a test in progress.</strong>
+        <div id="resume-detail"></div>
+        <div class="actions">
+          <button class="green" onclick="resumeSaved()">Resume</button>
+          <button class="ghost" onclick="discardSaved()">Discard &amp; start fresh</button>
+        </div>
+      </div>
+
+      <span class="stage-tag">Choose your session</span>
+      <p class="lede">
+        Practise under real conditions: a fixed clock, a hard stop at 0:00, no spell-check, and
+        no pasting — exactly like the computer-based test. When time is up you get a single
+        transcript to paste into your Claude <strong>ielts-coach</strong> for an honest band and an 8.5 rewrite.
+      </p>
+
+      <div class="modes">
+        <div class="mode-btn" onclick="startWriting('full')" role="button" tabindex="0">
+          <div class="mt">Full Writing Test — 60 minutes</div>
+          <div class="md">Task 1 and Task 2 on one shared clock. You manage the 20/40 split yourself.</div>
+        </div>
+        <div class="mode-btn" onclick="startWriting('task1')" role="button" tabindex="0">
+          <div class="mt">Task 1 only — 20 minutes</div>
+          <div class="md">Describe a chart, table, process or map in at least 150 words.</div>
+        </div>
+        <div class="mode-btn" onclick="startWriting('task2')" role="button" tabindex="0">
+          <div class="mt">Task 2 only — 40 minutes</div>
+          <div class="md">Write an essay of at least 250 words responding to a prompt.</div>
+        </div>
+      </div>
+
+      <div class="warnbox">
+        Your work autosaves to this browser only. Closing the tab <strong>freezes</strong> the clock;
+        reopening lets you resume with the time you had left.
+      </div>
+    </section>
+
+    <!-- ========== WRITING ========== -->
+    <section id="screen-write" class="hidden">
+      <div class="topbar">
+        <div class="tabs" id="tabs"></div>
+        <div style="text-align:right">
+          <div class="clock" id="clock">60:00</div>
+          <div class="clock-label" id="clock-label">Time remaining</div>
+        </div>
+      </div>
+
+      <div id="pane-t1" class="pane">
+        <div class="task-instr">Task 1 · You should spend about 20 minutes on this task. Write at least 150 words.</div>
+        <div class="task-prompt" id="t1-prompt"></div>
+        <div class="visual" id="t1-visual"></div>
+        <textarea class="essay" id="t1-answer" spellcheck="false" placeholder="Write your Task 1 report here…"></textarea>
+        <div class="wcbar"><span>Task 1</span><span class="count" id="t1-wc">0 / 150 words</span></div>
+      </div>
+
+      <div id="pane-t2" class="pane">
+        <div class="task-instr">Task 2 · You should spend about 40 minutes on this task. Write at least 250 words.</div>
+        <div class="task-prompt" id="t2-prompt"></div>
+        <textarea class="essay" id="t2-answer" spellcheck="false" placeholder="Write your Task 2 essay here…"></textarea>
+        <div class="wcbar"><span>Task 2</span><span class="count" id="t2-wc">0 / 250 words</span></div>
+      </div>
+
+      <div class="actions">
+        <button class="ghost grow" onclick="confirmFinish()">Finish &amp; get transcript</button>
+      </div>
+      <div class="hint">The clock stops you automatically at 0:00 — whatever you've written is collected.</div>
+    </section>
+
+    <!-- ========== DONE ========== -->
+    <section id="screen-done" class="hidden">
+      <span class="stage-tag" id="done-tag" style="color:var(--accent)">Time's up</span>
+      <div id="done-stats" style="margin-bottom:6px"></div>
+
+      <div class="tx-label">Your grading transcript</div>
+      <div class="payload" id="payload"></div>
+
+      <div class="warnbox" style="background:#f0f2ec;border-color:#c9d3c0;color:var(--green)">
+        <strong>Next step:</strong> Copy this, paste it to Claude, and say
+        <em>"grade this Academic Writing — band per criterion + 8.5 upgrade"</em>.
+        Your <strong>ielts-coach</strong> skill takes over from there.
+      </div>
+
+      <div class="actions">
+        <button class="green grow" onclick="copyPayload()">Copy transcript</button>
+        <button class="ghost" onclick="reset()">New session</button>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<div class="copied-toast" id="toast">Copied — paste it to your Claude coach</div>
+
+<script>
+/* ============================ Question banks ============================ */
+/* Task 1: chart/table items are data-driven — the on-screen visual and the
+   payload's VISUAL DATA text are both generated from the same `chart` object,
+   so they cannot diverge. Process/map items are hand-authored SVG + data pairs. */
+
+const TASK1 = [
+  { id:"t1-internet", type:"line",
+    prompt:"The line graph below shows the number of internet users per 100 people in two countries between 2000 and 2020. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+    chart:{ title:"Internet users per 100 people, 2000–2020", unit:"users per 100 people",
+      xLabels:["2000","2005","2010","2015","2020"],
+      series:[{name:"Country A", values:[12,34,58,76,88]},{name:"Country B", values:[4,15,33,55,72]}] } },
+
+  { id:"t1-park", type:"line",
+    prompt:"The line graph below shows the number of visitors (in thousands) to a national park between 2012 and 2020. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+    chart:{ title:"Visitors to a national park (thousands), 2012–2020", unit:"thousands of visitors",
+      xLabels:["2012","2014","2016","2018","2020"],
+      series:[{name:"Domestic", values:[120,140,155,150,165]},{name:"International", values:[40,55,80,95,130]}] } },
+
+  { id:"t1-coffee", type:"bar",
+    prompt:"The bar chart below shows the amount of coffee consumed per person per year (in kilograms) in four countries. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+    chart:{ title:"Coffee consumed per person per year (kg)", unit:"kg per person",
+      xLabels:["Finland","Norway","Italy","Japan"],
+      series:[{name:"kg/year", values:[12,9,5.5,3.5]}] } },
+
+  { id:"t1-faculty", type:"bar",
+    prompt:"The bar chart below shows the number of students (in thousands) enrolled in three university faculties in 2010 and 2020. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+    chart:{ title:"Students enrolled by faculty (thousands), 2010 vs 2020", unit:"thousands of students",
+      xLabels:["Engineering","Business","Arts"],
+      series:[{name:"2010", values:[8,12,10]},{name:"2020", values:[14,15,7]}] } },
+
+  { id:"t1-spending", type:"pie",
+    prompt:"The pie charts below show how an average household divided its monthly spending in 2000 and in 2020. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+    chart:{ title:"Average household monthly spending by category", unit:"%",
+      years:[
+        { label:"2000", slices:[{name:"Housing",value:30},{name:"Food",value:28},{name:"Transport",value:16},{name:"Leisure",value:12},{name:"Other",value:14}] },
+        { label:"2020", slices:[{name:"Housing",value:38},{name:"Food",value:20},{name:"Transport",value:14},{name:"Leisure",value:18},{name:"Other",value:10}] }
+      ] } },
+
+  { id:"t1-cities", type:"table",
+    prompt:"The table below shows the population (in millions) of four cities in 1990 and 2010, with a projection for 2030. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+    chart:{ title:"City population (millions), 1990–2030", unit:"millions",
+      columns:["City","1990","2010","2030 (projected)"],
+      rows:[
+        {label:"Lagos", cells:["4.8","10.4","24.4"]},
+        {label:"Cairo", cells:["9.1","16.9","24.0"]},
+        {label:"Tokyo", cells:["32.5","36.9","36.0"]},
+        {label:"London", cells:["8.1","9.7","11.2"]}
+      ] } },
+
+  { id:"t1-glass", type:"process",
+    prompt:"The diagram below shows the process by which used glass bottles are recycled. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+    data:"Cyclical process, six stages, glass bottle recycling: (1) Used bottles collected in bottle banks → (2) Transported to a recycling plant → (3) Sorted by colour (clear, green, brown) → (4) Crushed into small pieces called cullet → (5) Melted in a furnace at about 1500°C → (6) Moulded into new bottles, which are filled and sold, then returned to stage 1. The cycle repeats.",
+    svg:`<svg viewBox="0 0 640 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Glass recycling cycle">
+      <style>.b{fill:#faf5ea;stroke:#b4472f;stroke-width:1.5}.t{font:600 12px Fraunces,serif;fill:#2c2620}.a{stroke:#8a3421;stroke-width:1.6;fill:none;marker-end:url(#ah)}</style>
+      <defs><marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#8a3421"/></marker></defs>
+      <text x="320" y="24" text-anchor="middle" style="font:900 15px Fraunces,serif;fill:#1a1714">How glass bottles are recycled</text>
+      <rect class="b" x="40" y="60" width="150" height="52" rx="6"/><text class="t" x="115" y="82" text-anchor="middle">1 · Bottles collected</text><text class="t" x="115" y="99" text-anchor="middle">in bottle banks</text>
+      <rect class="b" x="250" y="60" width="150" height="52" rx="6"/><text class="t" x="325" y="82" text-anchor="middle">2 · Taken to the</text><text class="t" x="325" y="99" text-anchor="middle">recycling plant</text>
+      <rect class="b" x="460" y="60" width="150" height="52" rx="6"/><text class="t" x="535" y="82" text-anchor="middle">3 · Sorted by colour</text><text class="t" x="535" y="99" text-anchor="middle">(clear/green/brown)</text>
+      <rect class="b" x="460" y="250" width="150" height="52" rx="6"/><text class="t" x="535" y="272" text-anchor="middle">4 · Crushed into</text><text class="t" x="535" y="289" text-anchor="middle">cullet</text>
+      <rect class="b" x="250" y="250" width="150" height="52" rx="6"/><text class="t" x="325" y="272" text-anchor="middle">5 · Melted in a</text><text class="t" x="325" y="289" text-anchor="middle">furnace (~1500°C)</text>
+      <rect class="b" x="40" y="250" width="150" height="52" rx="6"/><text class="t" x="115" y="272" text-anchor="middle">6 · Moulded into</text><text class="t" x="115" y="289" text-anchor="middle">new bottles</text>
+      <path class="a" d="M190,86 H248"/><path class="a" d="M400,86 H458"/>
+      <path class="a" d="M535,112 V248"/><path class="a" d="M460,276 H402"/><path class="a" d="M250,276 H192"/>
+      <path class="a" d="M115,250 V114"/>
+      <text class="t" x="325" y="180" text-anchor="middle" style="fill:#8a7f6d;font-style:italic">the cycle repeats</text>
+    </svg>` },
+
+  { id:"t1-oil", type:"process",
+    prompt:"The diagram below shows the stages in the production of olive oil. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+    data:"Linear process, six stages, olive oil production: (1) Olives are harvested from the trees → (2) Washed to remove leaves and dirt → (3) Crushed, including the stones, into a paste → (4) The paste is slowly mixed (malaxing) for 30–40 minutes → (5) Pressed / spun in a centrifuge to separate the oil from water and solids → (6) The oil is bottled and labelled for sale.",
+    svg:`<svg viewBox="0 0 640 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Olive oil production stages">
+      <style>.b{fill:#faf5ea;stroke:#3f6b4c;stroke-width:1.5}.t{font:600 12px Fraunces,serif;fill:#2c2620}.a{stroke:#3f6b4c;stroke-width:1.6;fill:none;marker-end:url(#ah2)}</style>
+      <defs><marker id="ah2" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#3f6b4c"/></marker></defs>
+      <text x="320" y="24" text-anchor="middle" style="font:900 15px Fraunces,serif;fill:#1a1714">How olive oil is made</text>
+      <rect class="b" x="24" y="52" width="140" height="50" rx="6"/><text class="t" x="94" y="74" text-anchor="middle">1 · Olives</text><text class="t" x="94" y="91" text-anchor="middle">harvested</text>
+      <rect class="b" x="250" y="52" width="140" height="50" rx="6"/><text class="t" x="320" y="74" text-anchor="middle">2 · Washed</text>
+      <rect class="b" x="476" y="52" width="140" height="50" rx="6"/><text class="t" x="546" y="74" text-anchor="middle">3 · Crushed into</text><text class="t" x="546" y="91" text-anchor="middle">a paste</text>
+      <rect class="b" x="476" y="168" width="140" height="50" rx="6"/><text class="t" x="546" y="190" text-anchor="middle">4 · Mixed slowly</text><text class="t" x="546" y="207" text-anchor="middle">(malaxing)</text>
+      <rect class="b" x="250" y="168" width="140" height="50" rx="6"/><text class="t" x="320" y="190" text-anchor="middle">5 · Pressed /</text><text class="t" x="320" y="207" text-anchor="middle">centrifuged</text>
+      <rect class="b" x="24" y="168" width="140" height="50" rx="6"/><text class="t" x="94" y="190" text-anchor="middle">6 · Bottled</text><text class="t" x="94" y="207" text-anchor="middle">&amp; labelled</text>
+      <path class="a" d="M164,77 H248"/><path class="a" d="M390,77 H474"/>
+      <path class="a" d="M546,102 V166"/><path class="a" d="M476,193 H392"/><path class="a" d="M250,193 H166"/>
+    </svg>` },
+
+  { id:"t1-village", type:"map",
+    prompt:"The two maps below show the centre of a village called Greenford in 1995 and today. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+    data:"Two maps of Greenford village centre, 1995 vs today. Changes: the farmland in the north-east was replaced by a housing estate; a small shop on the main road was expanded into a large supermarket; the single-lane road through the centre was widened into a two-lane road; a new footbridge was built over the river in the south; the woodland in the west and the church in the centre were unchanged.",
+    svg:`<svg viewBox="0 0 640 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Greenford village 1995 and today">
+      <style>.p{fill:#fff;stroke:#d8cbb4;stroke-width:1.4}.g{fill:#eef2e8;stroke:#c9d3c0}.blk{fill:#faf5ea;stroke:#8a7f6d;stroke-width:1}.lbl{font:600 10px Fraunces,serif;fill:#2c2620}.hd{font:900 13px Fraunces,serif;fill:#1a1714}.rv{stroke:#41607a;stroke-width:4;fill:none}.rd{stroke:#8a7f6d;fill:none}</style>
+      <text x="160" y="20" text-anchor="middle" class="hd">Greenford — 1995</text>
+      <rect class="p" x="20" y="30" width="280" height="270"/>
+      <rect class="g" x="30" y="40" width="70" height="90"/><text class="lbl" x="65" y="88" text-anchor="middle">woodland</text>
+      <rect class="g" x="205" y="40" width="85" height="80"/><text class="lbl" x="247" y="84" text-anchor="middle">farmland</text>
+      <rect class="blk" x="120" y="150" width="60" height="45"/><text class="lbl" x="150" y="176" text-anchor="middle">church</text>
+      <rect class="blk" x="205" y="200" width="34" height="24"/><text class="lbl" x="222" y="238" text-anchor="middle">shop</text>
+      <path class="rd" d="M20,210 H300" style="stroke-width:3"/>
+      <path class="rv" d="M60,300 C120,250 200,280 300,250"/>
+      <text class="hd" x="480" y="20" text-anchor="middle">Greenford — today</text>
+      <rect class="p" x="340" y="30" width="280" height="270"/>
+      <rect class="g" x="350" y="40" width="70" height="90"/><text class="lbl" x="385" y="88" text-anchor="middle">woodland</text>
+      <rect class="blk" x="520" y="40" width="90" height="80"/><text class="lbl" x="565" y="76" text-anchor="middle">housing</text><text class="lbl" x="565" y="90" text-anchor="middle">estate</text>
+      <rect class="blk" x="440" y="150" width="60" height="45"/><text class="lbl" x="470" y="176" text-anchor="middle">church</text>
+      <rect class="blk" x="515" y="196" width="60" height="32"/><text class="lbl" x="545" y="216" text-anchor="middle">supermarket</text>
+      <path class="rd" d="M340,208 H620" style="stroke-width:6"/><path class="rd" d="M340,214 H620" style="stroke:#fff;stroke-width:1;stroke-dasharray:6 6"/>
+      <path class="rv" d="M380,300 C440,250 520,280 620,250"/>
+      <rect x="470" y="262" width="30" height="8" fill="#8a6d3b"/><text class="lbl" x="485" y="288" text-anchor="middle">footbridge</text>
+    </svg>` },
+
+  { id:"t1-campus", type:"map",
+    prompt:"The two maps below show the layout of Riverside College campus in 2005 and after redevelopment in 2020. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+    data:"Two maps of Riverside College, 2005 vs 2020. Changes: the open playing field in the centre was built on to create a new Science Block; a small staff car park in the north was enlarged into a large car park; the library in the east was extended with a new wing; a cafeteria was added next to the main entrance in the south; the sports hall in the west remained unchanged.",
+    svg:`<svg viewBox="0 0 640 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Riverside College 2005 and 2020">
+      <style>.p{fill:#fff;stroke:#d8cbb4;stroke-width:1.4}.g{fill:#eef2e8;stroke:#c9d3c0}.blk{fill:#faf5ea;stroke:#8a7f6d;stroke-width:1}.lbl{font:600 10px Fraunces,serif;fill:#2c2620}.hd{font:900 13px Fraunces,serif;fill:#1a1714}</style>
+      <text x="160" y="20" text-anchor="middle" class="hd">Riverside College — 2005</text>
+      <rect class="p" x="20" y="30" width="280" height="270"/>
+      <rect class="blk" x="40" y="60" width="55" height="40"/><text class="lbl" x="67" y="84" text-anchor="middle">car park</text>
+      <rect class="g" x="110" y="110" width="110" height="90"/><text class="lbl" x="165" y="158" text-anchor="middle">playing field</text>
+      <rect class="blk" x="235" y="110" width="50" height="70"/><text class="lbl" x="260" y="148" text-anchor="middle">library</text>
+      <rect class="blk" x="35" y="180" width="55" height="70"/><text class="lbl" x="62" y="218" text-anchor="middle">sports hall</text>
+      <rect class="blk" x="120" y="250" width="80" height="34"/><text class="lbl" x="160" y="271" text-anchor="middle">main entrance</text>
+      <text class="hd" x="480" y="20" text-anchor="middle">Riverside College — 2020</text>
+      <rect class="p" x="340" y="30" width="280" height="270"/>
+      <rect class="blk" x="360" y="55" width="90" height="48"/><text class="lbl" x="405" y="83" text-anchor="middle">large car park</text>
+      <rect class="blk" x="430" y="112" width="110" height="90"/><text class="lbl" x="485" y="155" text-anchor="middle">Science Block</text>
+      <rect class="blk" x="555" y="110" width="55" height="90"/><text class="lbl" x="582" y="150" text-anchor="middle">library</text><text class="lbl" x="582" y="164" text-anchor="middle">+ wing</text>
+      <rect class="blk" x="355" y="180" width="55" height="70"/><text class="lbl" x="382" y="218" text-anchor="middle">sports hall</text>
+      <rect class="blk" x="440" y="250" width="80" height="34"/><text class="lbl" x="480" y="271" text-anchor="middle">main entrance</text>
+      <rect class="blk" x="530" y="250" width="55" height="34"/><text class="lbl" x="557" y="271" text-anchor="middle">cafeteria</text>
+    </svg>` }
+];
+
+const TASK2 = [
+  { id:"o1", prompt:"Some people believe that children should be taught to compete, while others think they should be taught to cooperate. Discuss both views and give your own opinion." },
+  { id:"o2", prompt:"Some people think that governments should invest more in public transport, while others believe the priority should be building more roads. Discuss both views and give your own opinion." },
+  { id:"o3", prompt:"In many countries, the proportion of older people is steadily increasing. Do the advantages of an ageing population outweigh the disadvantages?" },
+  { id:"o4", prompt:"Some people think that universities should only offer degrees that lead directly to employment. To what extent do you agree or disagree?" },
+  { id:"d1", prompt:"Some people believe that international sporting events help to build peace between nations, while others think they mainly create tension. Discuss both views and give your own opinion." },
+  { id:"d2", prompt:"Some argue that the internet has brought people closer together, while others believe it has made people more isolated. Discuss both views and give your own opinion." },
+  { id:"d3", prompt:"Some people think that a country's history and traditions should be preserved, while others believe a country should focus on the future. Discuss both views and give your own opinion." },
+  { id:"ad1", prompt:"More and more people are choosing to work from home rather than in an office. Do the advantages of this trend outweigh the disadvantages?" },
+  { id:"ad2", prompt:"In many cities, private cars are being replaced by shared vehicles and ride-hailing services. What are the advantages and disadvantages of this development?" },
+  { id:"ad3", prompt:"An increasing number of students are choosing to study abroad rather than in their home country. What are the advantages and disadvantages of studying abroad?" },
+  { id:"ps1", prompt:"Many cities suffer from severe traffic congestion. What are the causes of this problem, and what measures could be taken to solve it?" },
+  { id:"ps2", prompt:"Around the world, people are consuming far more sugar than is healthy. What are the reasons for this, and what can be done to address the problem?" },
+  { id:"ps3", prompt:"In many countries, young people are leaving rural areas to live and work in cities. Why is this happening, and what problems can it cause?" },
+  { id:"tp1", prompt:"Many people today spend a large part of their income on entertainment and leisure. Why is this the case? Is it a positive or negative development?" },
+  { id:"tp2", prompt:"These days, more people than ever are learning a foreign language. Why do so many people want to learn another language? Is this a positive or negative trend?" }
+];
+
+/* ============================ Pure helpers ============================ */
+
+// Word count: split on whitespace; a hyphenated word, a number, and a
+// contraction each count as ONE (they contain no internal whitespace).
+function countWords(s){ return (String(s).trim().match(/\S+/g) || []).length; }
+
+const MODE_META = {
+  full:  { label:"Full test (60 min)", secs:3600, t1:true,  t2:true  },
+  task1: { label:"Task 1 only (20 min)", secs:1200, t1:true,  t2:false },
+  task2: { label:"Task 2 only (40 min)", secs:2400, t1:false, t2:true  }
+};
+
+// Pure payload builder. cfg = {mode,timeUsed,t1:{prompt,data}|null,t1Answer,t2:{prompt}|null,t2Answer}
+function buildPayloadFrom(cfg){
+  const L = [];
+  L.push("PAYLOAD v1");
+  L.push("IELTS Academic Writing — grade strictly per criterion, no sugar-coating, then show the Band 8.5 version. [ielts-coach skill]");
+  L.push("");
+  L.push("MODE: " + (MODE_META[cfg.mode] ? MODE_META[cfg.mode].label : cfg.mode) + " · Time used: " + (cfg.timeUsed || "—"));
+  if (cfg.t1){
+    const ans = String(cfg.t1Answer || "").trim();
+    const wc = countWords(ans);
+    const flag = (wc > 0 && wc < 150) ? " — UNDER MINIMUM" : "";
+    L.push("TASK 1 PROMPT: " + cfg.t1.prompt);
+    L.push("TASK 1 VISUAL DATA (for accuracy checking): " + cfg.t1.data);
+    L.push("TASK 1 ANSWER (" + wc + " words" + flag + "):");
+    L.push(ans || "(no answer written)");
+    L.push("");
+  }
+  if (cfg.t2){
+    const ans = String(cfg.t2Answer || "").trim();
+    const wc = countWords(ans);
+    const flag = (wc > 0 && wc < 250) ? " — UNDER MINIMUM" : "";
+    L.push("TASK 2 PROMPT: " + cfg.t2.prompt);
+    L.push("TASK 2 ANSWER (" + wc + " words" + flag + "):");
+    L.push(ans || "(no answer written)");
+  }
+  return L.join("\n").trim();
+}
+
+/* ============================ Visual rendering ============================ */
+
+const PALETTE = ["var(--c1)","var(--c2)","var(--c3)","var(--c4)"];
+const CW = 560, CH = 300, MG = { t:34, r:18, b:52, l:46 };
+
+function niceMax(v){ const p = Math.pow(10, Math.floor(Math.log10(v))); const n = v/p; const step = n<=1?1:n<=2?2:n<=5?5:10; return step*p; }
+function sx(i,n){ const w = CW-MG.l-MG.r; return MG.l + (n===1 ? w/2 : w*i/(n-1)); }
+function sy(v,max){ const h = CH-MG.t-MG.b; return MG.t + h*(1 - v/max); }
+function esc(s){ return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+
+function axes(max, xLabels, title){
+  let g = `<text x="${CW/2}" y="18" text-anchor="middle" style="font:900 14px Fraunces,serif;fill:#1a1714">${esc(title)}</text>`;
+  const y0 = sy(0,max), yTop = MG.t;
+  g += `<line x1="${MG.l}" y1="${yTop}" x2="${MG.l}" y2="${y0}" stroke="#d8cbb4"/>`;
+  g += `<line x1="${MG.l}" y1="${y0}" x2="${CW-MG.r}" y2="${y0}" stroke="#d8cbb4"/>`;
+  for (let t=0; t<=4; t++){ const v = max*t/4, y = sy(v,max);
+    g += `<line x1="${MG.l}" y1="${y}" x2="${CW-MG.r}" y2="${y}" stroke="#eee3cf"/>`;
+    g += `<text x="${MG.l-6}" y="${y+4}" text-anchor="end" style="font:400 11px Newsreader,serif;fill:#8a7f6d">${(+v.toFixed(1))}</text>`; }
+  xLabels.forEach((lb,i)=>{ const x = sx(i,xLabels.length);
+    g += `<text x="${x}" y="${y0+18}" text-anchor="middle" style="font:600 11px Fraunces,serif;fill:#2c2620">${esc(lb)}</text>`; });
+  return g;
+}
+function legend(series){
+  return series.map((s,i)=>{ const x = MG.l + i*130, y = CH-14;
+    return `<rect x="${x}" y="${y-9}" width="12" height="12" fill="${PALETTE[i%4]}"/><text x="${x+17}" y="${y+1}" style="font:600 11px Fraunces,serif;fill:#2c2620">${esc(s.name)}</text>`; }).join("");
+}
+
+function lineSVG(c){
+  const max = niceMax(Math.max(...c.series.flatMap(s=>s.values)));
+  let g = axes(max, c.xLabels, c.title);
+  c.series.forEach((s,si)=>{
+    const pts = s.values.map((v,i)=>`${sx(i,c.xLabels.length)},${sy(v,max)}`).join(" ");
+    g += `<polyline points="${pts}" fill="none" stroke="${PALETTE[si%4]}" stroke-width="2.4"/>`;
+    s.values.forEach((v,i)=>{ const x=sx(i,c.xLabels.length), y=sy(v,max);
+      g += `<circle cx="${x}" cy="${y}" r="3.4" fill="${PALETTE[si%4]}"/>`;
+      g += `<text x="${x}" y="${y-8}" text-anchor="middle" style="font:600 10px Fraunces,serif;fill:#2c2620">${v}</text>`; });
+  });
+  g += legend(c.series);
+  return `<svg viewBox="0 0 ${CW} ${CH}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${esc(c.title)}">${g}</svg>`;
+}
+
+function barSVG(c){
+  const max = niceMax(Math.max(...c.series.flatMap(s=>s.values)));
+  let g = axes(max, c.xLabels, c.title);
+  const n = c.xLabels.length, ns = c.series.length;
+  const groupW = (CW-MG.l-MG.r)/n, barW = groupW/(ns+1);
+  const y0 = sy(0,max);
+  c.xLabels.forEach((lb,i)=>{ const gx = MG.l + groupW*i + barW/2;
+    c.series.forEach((s,si)=>{ const v=s.values[i], x=gx+si*barW, y=sy(v,max);
+      g += `<rect x="${x}" y="${y}" width="${barW*0.86}" height="${y0-y}" fill="${PALETTE[si%4]}"/>`;
+      g += `<text x="${x+barW*0.43}" y="${y-5}" text-anchor="middle" style="font:600 10px Fraunces,serif;fill:#2c2620">${v}</text>`; });
+  });
+  if (ns>1) g += legend(c.series);
+  return `<svg viewBox="0 0 ${CW} ${CH}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${esc(c.title)}">${g}</svg>`;
+}
+
+function polar(cx,cy,r,deg){ const a=(deg-90)*Math.PI/180; return [cx+r*Math.cos(a), cy+r*Math.sin(a)]; }
+function pieOne(cx,cy,r,slices){
+  let ang=0, g="";
+  slices.forEach((s,i)=>{ const sweep=s.value/100*360, a1=ang, a2=ang+sweep; ang=a2;
+    const [x1,y1]=polar(cx,cy,r,a1), [x2,y2]=polar(cx,cy,r,a2), large=sweep>180?1:0;
+    g += `<path d="M${cx},${cy} L${x1.toFixed(1)},${y1.toFixed(1)} A${r},${r} 0 ${large} 1 ${x2.toFixed(1)},${y2.toFixed(1)} Z" fill="${PALETTE[i%4] || '#c9b79a'}" stroke="#fff" stroke-width="1.5"/>`;
+    const [lx,ly]=polar(cx,cy,r*0.62,(a1+a2)/2);
+    g += `<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="middle" style="font:700 10px Fraunces,serif;fill:#fff">${s.value}%</text>`; });
+  return g;
+}
+function pieSVG(c){
+  const W=560, H=320, r=80;
+  let g=`<text x="${W/2}" y="18" text-anchor="middle" style="font:900 14px Fraunces,serif;fill:#1a1714">${esc(c.title)}</text>`;
+  const centers=[150,410];
+  c.years.forEach((yr,i)=>{ const cx=centers[i], cy=150;
+    g += pieOne(cx,cy,r,yr.slices);
+    g += `<text x="${cx}" y="${cy+r+26}" text-anchor="middle" style="font:700 13px Fraunces,serif;fill:#2c2620">${esc(yr.label)}</text>`; });
+  const names=c.years[0].slices.map(s=>s.name);
+  names.forEach((nm,i)=>{ const x=40+i*100, y=H-12;
+    g += `<rect x="${x}" y="${y-9}" width="11" height="11" fill="${PALETTE[i%4]||'#c9b79a'}"/><text x="${x+15}" y="${y}" style="font:600 10px Fraunces,serif;fill:#2c2620">${esc(nm)}</text>`; });
+  return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${esc(c.title)}">${g}</svg>`;
+}
+
+function tableHTML(c){
+  let h = `<table><caption>${esc(c.title)}</caption><thead><tr>` + c.columns.map(col=>`<th>${esc(col)}</th>`).join("") + `</tr></thead><tbody>`;
+  c.rows.forEach(r=>{ h += `<tr><td>${esc(r.label)}</td>` + r.cells.map(cell=>`<td>${esc(cell)}</td>`).join("") + `</tr>`; });
+  return h + `</tbody></table>`;
+}
+
+function renderVisual(item){
+  if (item.type==="line")  return lineSVG(item.chart);
+  if (item.type==="bar")   return barSVG(item.chart);
+  if (item.type==="pie")   return pieSVG(item.chart);
+  if (item.type==="table") return tableHTML(item.chart);
+  return item.svg; // process / map
+}
+
+// VISUAL DATA text — generated from the same source object for chart types.
+function visualData(item){
+  const c = item.chart;
+  if (item.type==="line" || item.type==="bar"){
+    const kind = item.type==="line" ? "Line graph" : "Bar chart";
+    const rows = c.series.map(s=>`${s.name}: ${c.xLabels.map((x,i)=>x+"="+s.values[i]).join(", ")}`).join("; ");
+    return `${kind}. ${c.title} (${c.unit}). ${rows}.`;
+  }
+  if (item.type==="pie"){
+    const yrs = c.years.map(y=>`${y.label}: ${y.slices.map(s=>s.name+" "+s.value+"%").join(", ")}`).join(" | ");
+    return `Pie chart(s). ${c.title}. ${yrs}.`;
+  }
+  if (item.type==="table"){
+    const hdr = c.columns.join(" / ");
+    const rows = c.rows.map(r=>`${r.label}: ${r.cells.join(", ")}`).join("; ");
+    return `Table. ${c.title}. Columns: ${hdr}. ${rows}.`;
+  }
+  return item.data; // process / map
+}
+
+/* ============================ App state & flow ============================ */
+
+const S = id => document.getElementById(id);
+const STORE_KEY = "ielts-writing-session";
+const SCHEMA = 1;
+
+let session = null;      // {mode,t1Id,t2Id,activeTab,finished}
+let deadline = 0;        // ms epoch when time runs out (while running)
+let tick = null;
+let autosave = null;
+
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function fmtClock(sec){ sec=Math.max(0,Math.round(sec)); const m=Math.floor(sec/60), s=sec%60; return m+":"+String(s).padStart(2,"0"); }
+function itemT1(){ return TASK1.find(x=>x.id===session.t1Id); }
+function itemT2(){ return TASK2.find(x=>x.id===session.t2Id); }
+
+function startWriting(mode){
+  const meta = MODE_META[mode];
+  session = {
+    mode,
+    t1Id: meta.t1 ? pick(TASK1).id : null,
+    t2Id: meta.t2 ? pick(TASK2).id : null,
+    activeTab: meta.t1 ? "t1" : "t2",
+    finished: false
+  };
+  deadline = Date.now() + meta.secs*1000;
+  enterWriteScreen(meta.secs);
+  saveState();
+}
+
+function enterWriteScreen(remainingSecs){
+  const meta = MODE_META[session.mode];
+  // tabs
+  const tabs = S("tabs"); tabs.innerHTML = "";
+  const showT1 = meta.t1, showT2 = meta.t2, both = showT1 && showT2;
+  if (both){
+    tabs.innerHTML =
+      `<div class="tab" data-tab="t1" onclick="switchTab('t1')">Task 1</div>` +
+      `<div class="tab" data-tab="t2" onclick="switchTab('t2')">Task 2</div>`;
+  } else {
+    tabs.innerHTML = `<div class="tab active" style="cursor:default">${showT1?"Task 1":"Task 2"}</div>`;
+  }
+
+  if (showT1){
+    const it = itemT1();
+    S("t1-prompt").textContent = it.prompt;
+    S("t1-visual").innerHTML = renderVisual(it);
+  }
+  if (showT2){ S("t2-prompt").textContent = itemT2().prompt; }
+
+  // restore answers if resuming
+  S("t1-answer").value = session.t1Answer || "";
+  S("t2-answer").value = session.t2Answer || "";
+
+  S("pane-t1").classList.toggle("hidden", !showT1);
+  S("pane-t2").classList.toggle("hidden", !showT2);
+  if (both) switchTab(session.activeTab || "t1");
+
+  updateWC();
+  show("screen-write");
+  runClock();
+  clearInterval(autosave);
+  autosave = setInterval(saveState, 5000);
+}
+
+function switchTab(which){
+  session.activeTab = which;
+  document.querySelectorAll(".tab[data-tab]").forEach(t=>t.classList.toggle("active", t.dataset.tab===which));
+  S("pane-t1").classList.toggle("hidden", which!=="t1");
+  S("pane-t2").classList.toggle("hidden", which!=="t2");
+}
+
+function runClock(){
+  clearInterval(tick);
+  const paint = () => {
+    const remain = (deadline - Date.now())/1000;
+    const el = S("clock");
+    el.textContent = fmtClock(remain);
+    el.classList.toggle("warn", remain<=600 && remain>60);
+    el.classList.toggle("danger", remain<=60);
+    S("clock-label").textContent = remain<=600 ? "Time running out" : "Time remaining";
+    if (remain<=0){ clearInterval(tick); finish(true); }
+  };
+  paint();
+  tick = setInterval(paint, 250);
+}
+
+function updateWC(){
+  const meta = MODE_META[session.mode];
+  if (meta.t1){ const wc=countWords(S("t1-answer").value); const e=S("t1-wc");
+    e.textContent = wc+" / 150 words"; e.className = "count "+(wc===0?"":wc<150?"under":"ok"); }
+  if (meta.t2){ const wc=countWords(S("t2-answer").value); const e=S("t2-wc");
+    e.textContent = wc+" / 250 words"; e.className = "count "+(wc===0?"":wc<250?"under":"ok"); }
+}
+
+function currentTimeUsed(){
+  const meta = MODE_META[session.mode];
+  const usedSec = meta.secs - Math.max(0,(deadline - Date.now())/1000);
+  return fmtClock(usedSec).replace(/^(\d+):/, (m,mm)=> String(mm).padStart(2,"0")+":");
+}
+
+function confirmFinish(){
+  if (confirm("Finish now and generate your transcript? The clock will stop.")) finish(false);
+}
+
+function finish(auto){
+  clearInterval(tick); clearInterval(autosave);
+  session.t1Answer = S("t1-answer") ? S("t1-answer").value : "";
+  session.t2Answer = S("t2-answer") ? S("t2-answer").value : "";
+  session.timeUsed = currentTimeUsed();
+  session.finished = true;
+  saveState();
+
+  const meta = MODE_META[session.mode];
+  const cfg = {
+    mode: session.mode,
+    timeUsed: session.timeUsed,
+    t1: meta.t1 ? { prompt: itemT1().prompt, data: visualData(itemT1()) } : null,
+    t1Answer: session.t1Answer,
+    t2: meta.t2 ? { prompt: itemT2().prompt } : null,
+    t2Answer: session.t2Answer
+  };
+  const payload = buildPayloadFrom(cfg);
+  S("payload").textContent = payload;
+  S("done-tag").textContent = auto ? "Time's up — pencils down" : "Session finished";
+
+  // stats
+  const stats = [];
+  if (meta.t1){ const wc=countWords(session.t1Answer); stats.push(statChip("Task 1", wc, 150)); }
+  if (meta.t2){ const wc=countWords(session.t2Answer); stats.push(statChip("Task 2", wc, 250)); }
+  S("done-stats").innerHTML = stats.join("");
+  show("screen-done");
+}
+
+function statChip(label, wc, min){
+  const under = wc>0 && wc<min;
+  const note = wc===0 ? "no answer" : under ? "under "+min+" — penalised" : "over the "+min+" minimum";
+  return `<span class="stat ${under?'under':''}">${label}: <b>${wc} words</b> (${note})</span>`;
+}
+
+/* ---------- copy ---------- */
+function copyPayload(){
+  const text = S("payload").textContent;
+  navigator.clipboard.writeText(text).then(showToast, ()=>{
+    const ta=document.createElement("textarea"); ta.value=text; document.body.appendChild(ta);
+    ta.select(); try{document.execCommand("copy");}catch(_){} ta.remove(); showToast();
+  });
+}
+function showToast(){ const t=S("toast"); t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2200); }
+
+/* ---------- persistence (freeze-on-close) ---------- */
+function saveState(){
+  if (!session) return;
+  try{
+    session.t1Answer = S("t1-answer") ? S("t1-answer").value : session.t1Answer;
+    session.t2Answer = S("t2-answer") ? S("t2-answer").value : session.t2Answer;
+    const blob = {
+      schemaVersion: SCHEMA,
+      session,
+      remainingMs: session.finished ? 0 : Math.max(0, deadline - Date.now())
+    };
+    localStorage.setItem(STORE_KEY, JSON.stringify(blob));
+  }catch(_){ /* private mode: autosave silently disabled */ }
+}
+function loadSaved(){
+  try{
+    const raw = localStorage.getItem(STORE_KEY); if (!raw) return null;
+    const blob = JSON.parse(raw);
+    if (blob.schemaVersion !== SCHEMA) { localStorage.removeItem(STORE_KEY); return null; }
+    if (!blob.session || blob.session.finished) return null;
+    if (!blob.remainingMs || blob.remainingMs < 1000) return null;
+    return blob;
+  }catch(_){ return null; }
+}
+function offerResume(){
+  const blob = loadSaved(); if (!blob) return;
+  const m = MODE_META[blob.session.mode];
+  S("resume-detail").textContent =
+    (m?m.label:blob.session.mode) + " · about " + fmtClock(blob.remainingMs/1000) + " left.";
+  S("resume-box").classList.remove("hidden");
+  window._resumeBlob = blob;
+}
+function resumeSaved(){
+  const blob = window._resumeBlob; if (!blob) return;
+  session = blob.session;
+  deadline = Date.now() + blob.remainingMs;   // freeze semantics: pick up where you left off
+  S("resume-box").classList.add("hidden");
+  enterWriteScreen(blob.remainingMs/1000);
+}
+function discardSaved(){
+  localStorage.removeItem(STORE_KEY);
+  window._resumeBlob = null;
+  S("resume-box").classList.add("hidden");
+}
+
+/* ---------- screen switch & reset ---------- */
+function show(id){
+  ["screen-start","screen-write","screen-done"].forEach(s=>S(s).classList.add("hidden"));
+  S(id).classList.remove("hidden");
+}
+function reset(){
+  clearInterval(tick); clearInterval(autosave);
+  localStorage.removeItem(STORE_KEY);
+  session = null; deadline = 0;
+  S("t1-answer").value=""; S("t2-answer").value="";
+  show("screen-start");
+}
+
+/* ---------- wiring ---------- */
+["t1-answer","t2-answer"].forEach(id=>{
+  const el = S(id);
+  el.addEventListener("input", ()=>{ updateWC(); saveState(); });
+  el.addEventListener("paste", e=>{ e.preventDefault(); }); // no pasting in the real test
+});
+document.addEventListener("visibilitychange", ()=>{ if (document.hidden) saveState(); });
+window.addEventListener("beforeunload", saveState);
+
+/* ---------- self-test (?selftest=1) ---------- */
+function runSelfTest(){
+  const out = [];
+  const a = (cond,msg)=>{ out.push((cond?"ok   ":"FAIL ")+msg); return cond; };
+  let allPass = true; const A=(c,m)=>{ if(!a(c,m)) allPass=false; };
+
+  A(countWords("")===0, "empty = 0");
+  A(countWords("   \n\t ")===0, "whitespace = 0");
+  A(countWords("one two three")===3, "three words");
+  A(countWords("well-being state-of-the-art")===2, "hyphenated = one each");
+  A(countWords("don't stop 2020 now")===4, "contraction + number = one each");
+  A(countWords("a\nb\tc")===3, "newlines/tabs split");
+
+  const p1 = buildPayloadFrom({mode:"task2", t2:{prompt:"PROMPT"}, t2Answer:"a b c"});
+  A(p1.startsWith("PAYLOAD v1"), "payload header present");
+  A(p1.includes("TASK 2 ANSWER (3 words"), "word count stamped");
+  A(!/TASK 1/.test(p1), "single task omits Task 1 block");
+
+  const p2 = buildPayloadFrom({mode:"task2", t2:{prompt:"P"}, t2Answer:""});
+  A(p2.includes("(no answer written)"), "empty answer -> placeholder");
+  A(!p2.includes("UNDER MINIMUM"), "empty answer has no under-min flag");
+
+  const short = Array(20).fill("word").join(" ");
+  const p3 = buildPayloadFrom({mode:"task1", t1:{prompt:"P",data:"D"}, t1Answer:short});
+  A(p3.includes("UNDER MINIMUM"), "short Task 1 flagged UNDER MINIMUM");
+  A(/TASK 1 VISUAL DATA \(for accuracy checking\): D/.test(p3), "visual data line present");
+
+  // renderers must not throw and must reflect the data
+  TASK1.forEach(it=>{ const html=renderVisual(it); A(!!html && html.length>10, "renders "+it.id);
+    if (it.type!=="process" && it.type!=="map") A(visualData(it).length>10, "data text "+it.id); });
+  A(/12/.test(visualData(TASK1[2])), "bar data includes a value");
+
+  const banner = document.createElement("div");
+  banner.className = "selftest";
+  banner.textContent = (allPass? "SELFTEST PASS\n":"SELFTEST FAIL\n") + out.join("\n");
+  document.body.appendChild(banner);
+  console.log(out.join("\n"));
+}
+
+/* ---------- boot ---------- */
+if (/[?&]selftest=1\b/.test(location.search)) {
+  runSelfTest();
+} else {
+  offerResume();
+}
+</script>
