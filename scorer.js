@@ -41,7 +41,7 @@ function withinWordLimit(answer, limit) {
 // Descending thresholds: first row whose min <= raw wins. Covers all raw 0-40.
 // rawToBand(0) === 1.0 (an attempted test floors at Band 1); Band 0 "did not attempt"
 // is decided by the Results layer, not here.
-var BAND_TABLE = [
+var READING_TABLE = [
   { min: 39, band: 9.0 }, { min: 37, band: 8.5 }, { min: 35, band: 8.0 },
   { min: 33, band: 7.5 }, { min: 30, band: 7.0 }, { min: 27, band: 6.5 },
   { min: 23, band: 6.0 }, { min: 19, band: 5.5 }, { min: 15, band: 5.0 },
@@ -49,12 +49,54 @@ var BAND_TABLE = [
   { min: 6, band: 3.0 }, { min: 4, band: 2.5 }, { min: 2, band: 2.0 },
   { min: 0, band: 1.0 },
 ];
+// Academic Listening differs from Reading (e.g. 32 -> 7.5 not 7.0; 18 -> 5.5 not 5.0).
+var LISTENING_TABLE = [
+  { min: 39, band: 9.0 }, { min: 37, band: 8.5 }, { min: 35, band: 8.0 },
+  { min: 32, band: 7.5 }, { min: 30, band: 7.0 }, { min: 26, band: 6.5 },
+  { min: 23, band: 6.0 }, { min: 18, band: 5.5 }, { min: 16, band: 5.0 },
+  { min: 13, band: 4.5 }, { min: 10, band: 4.0 }, { min: 8, band: 3.5 },
+  { min: 6, band: 3.0 }, { min: 4, band: 2.5 }, { min: 2, band: 2.0 },
+  { min: 0, band: 1.0 },
+];
 
-function rawToBand(raw) {
-  for (var i = 0; i < BAND_TABLE.length; i++) {
-    if (raw >= BAND_TABLE[i].min) return BAND_TABLE[i].band;
+// module defaults to "reading" so existing one-arg call sites are unchanged.
+function rawToBand(raw, module) {
+  var table = module === "listening" ? LISTENING_TABLE : READING_TABLE;
+  for (var i = 0; i < table.length; i++) {
+    if (raw >= table[i].min) return table[i].band;
   }
   return 1.0;
+}
+
+// Split a spoken turn into sentence-level chunks so no single TTS utterance nears
+// Chrome's ~15s continuous-speech truncation. Split on [.!?] + whitespace + capital,
+// EXCEPT after a single capital letter (spelled names stay whole), after a known
+// abbreviation, or inside a number.
+var SPLIT_ABBREV = ["mr", "mrs", "ms", "dr", "st", "no", "e.g", "i.e"];
+function splitSentences(text) {
+  var s = String(text == null ? "" : text);
+  var out = [], start = 0;
+  for (var i = 0; i < s.length; i++) {
+    var ch = s[i];
+    if (ch !== "." && ch !== "!" && ch !== "?") continue;
+    var rest = s.slice(i + 1);
+    // must be followed by whitespace then a capital letter to be a boundary
+    var m = rest.match(/^\s+([A-Z])/);
+    if (!m) continue;
+    // never split inside a number: digit before the dot and digit-ish after
+    if (ch === "." && /\d\s*$/.test(s.slice(start, i + 1)) && /^\s*\d/.test(rest)) continue;
+    // token immediately before the punctuation
+    var before = s.slice(start, i).trim().split(/\s+/).pop() || "";
+    var bl = before.toLowerCase();
+    if (before.length === 1 && /[A-Za-z]/.test(before)) continue;         // single letter = spelled name
+    if (SPLIT_ABBREV.indexOf(bl) !== -1 || SPLIT_ABBREV.indexOf(bl + "." ) !== -1) continue; // abbreviation
+    // real boundary
+    out.push(s.slice(start, i + 1).trim());
+    start = i + 1;
+  }
+  var tail = s.slice(start).trim();
+  if (tail) out.push(tail);
+  return out.length ? out : [s.trim()];
 }
 
 /* ---------- scoring ---------- */
@@ -128,9 +170,18 @@ function scoreTest(test, responses) {
 /* ---------- content lint ---------- */
 
 // Validate a hand-authored bank. Returns { ok, errors:[] }.
+// For a Listening test, join and normalize a part's spoken script text so we can
+// check that spoken answers actually occur in the transcript.
+function partScriptText(part) {
+  return normalize((part.script || [])
+    .map(function (turn) { return turn.text || ""; }).join(" "));
+}
+
 function lintContent(tests) {
   var errors = [];
   tests.forEach(function (test) {
+    // Listening tests use `parts` (each with a `script`) instead of `passages`.
+    if (test.parts) { lintListening(test, errors); return; }
     var labels = {};
     var seen = [];
     eachGroup(test, function () {});
@@ -177,7 +228,47 @@ function lintContent(tests) {
   return { ok: errors.length === 0, errors: errors };
 }
 
+// Listening lint: shares the key/number/word-limit checks and adds the
+// transcript-verbatim rule (with the spokenAs exception).
+function lintListening(test, errors) {
+  var seen = [];
+  test.parts.forEach(function (part) {
+    var script = partScriptText(part);
+    (part.groups || []).forEach(function (g) {
+      var optKeys = (g.options || []).map(function (o) { return o.key; });
+      g.questions.forEach(function (q) {
+        if (g.input === "single" && g.selectCount) {
+          if (!(q.ns && q.ns.length === g.selectCount && q.answer.length === g.selectCount))
+            errors.push(test.id + ": multi-answer invariant broken");
+          q.answer.forEach(function (k) { if (optKeys.indexOf(k) === -1) errors.push(test.id + ": multi-answer key " + k + " not in options"); });
+          q.ns.forEach(function (n) { seen.push(n); });
+          return;
+        }
+        seen.push(q.n);
+        if (g.input === "match") {
+          if (optKeys.indexOf(q.answer) === -1) errors.push(test.id + " q" + q.n + ": match key not in options");
+        } else if (g.input === "single") {
+          var set = g.options ? optKeys : (g.type && /yes\/no/i.test(g.type) ? YNNG : TFNG);
+          if (set.indexOf(q.answer) === -1) errors.push(test.id + " q" + q.n + ": single key '" + q.answer + "' not valid");
+        } else if (g.input === "text") {
+          q.answer.forEach(function (v) {
+            if (!withinWordLimit(v, g.wordLimit)) errors.push(test.id + " q" + q.n + ": variant '" + v + "' exceeds word limit");
+          });
+          // transcript-verbatim: the spoken form must appear in this part's script.
+          var probe = q.spokenAs ? [q.spokenAs] : q.answer;
+          var found = probe.some(function (v) { return script.indexOf(normalize(v)) !== -1; });
+          if (!found) errors.push(test.id + " q" + q.n + ": answer not found in the part's script transcript");
+        }
+      });
+    });
+  });
+  seen.sort(function (a, b) { return a - b; });
+  for (var i = 0; i < seen.length; i++) {
+    if (seen[i] !== i + 1) { errors.push(test.id + ": question numbers not contiguous/unique at " + seen[i]); break; }
+  }
+}
+
 /* ---------- dual export ---------- */
 if (typeof module !== "undefined" && module.exports) {
-  module.exports = { normalize: normalize, withinWordLimit: withinWordLimit, rawToBand: rawToBand, scoreQuestionGroup: scoreQuestionGroup, scoreTest: scoreTest, lintContent: lintContent };
+  module.exports = { normalize: normalize, withinWordLimit: withinWordLimit, rawToBand: rawToBand, splitSentences: splitSentences, scoreQuestionGroup: scoreQuestionGroup, scoreTest: scoreTest, lintContent: lintContent };
 }

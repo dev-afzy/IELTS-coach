@@ -1,8 +1,8 @@
-// Unit tests for scorer.js — the single source of Reading scoring logic.
-// Run with a modern node (18+):  node --test tests/reading/
+// Unit tests for scorer.js — the single source of Reading + Listening scoring logic.
+// Run with a modern node (18+):  node --test tests/scorer.test.js
 const test = require("node:test");
 const assert = require("node:assert");
-const S = require("../../scorer.js");
+const S = require("../scorer.js");
 
 test("rawToBand covers the whole 0-40 table at every boundary", () => {
   const cases = [
@@ -15,6 +15,58 @@ test("rawToBand covers the whole 0-40 table at every boundary", () => {
   for (const [raw, band] of cases) {
     assert.strictEqual(S.rawToBand(raw), band, `raw ${raw} -> ${band}`);
   }
+});
+
+test("rawToBand: Listening table + module argument + back-compat", () => {
+  const L = [
+    [40, 9], [37, 8.5], [35, 8], [32, 7.5], [30, 7], [26, 6.5],
+    [23, 6], [18, 5.5], [16, 5], [13, 4.5], [10, 4], [8, 3.5],
+    [6, 3], [4, 2.5], [2, 2], [1, 1], [0, 1],
+  ];
+  for (const [raw, band] of L) {
+    assert.strictEqual(S.rawToBand(raw, "listening"), band, `listening raw ${raw} -> ${band}`);
+  }
+  // cross-table divergence points
+  assert.strictEqual(S.rawToBand(32), 7.0, "reading 32 -> 7.0 (default)");
+  assert.strictEqual(S.rawToBand(32, "listening"), 7.5, "listening 32 -> 7.5");
+  assert.strictEqual(S.rawToBand(18), 5.0, "reading 18 -> 5.0 (default)");
+  assert.strictEqual(S.rawToBand(18, "listening"), 5.5, "listening 18 -> 5.5");
+  // back-compat: one-arg still reading
+  assert.strictEqual(S.rawToBand(30), 7.0, "one-arg = reading");
+});
+
+test("splitSentences: sentence boundaries, spelled names, abbreviations, numbers", () => {
+  assert.deepStrictEqual(S.splitSentences("Hi there. How are you?"), ["Hi there.", "How are you?"]);
+  assert.deepStrictEqual(S.splitSentences("B. R. A. D. F. O. R. D."), ["B. R. A. D. F. O. R. D."]); // single-letter spell = one utterance
+  assert.deepStrictEqual(S.splitSentences("Mr. Smith said hello."), ["Mr. Smith said hello."]);     // abbreviation
+  assert.deepStrictEqual(S.splitSentences("It costs £3.50 today."), ["It costs £3.50 today."]);      // number
+  assert.deepStrictEqual(S.splitSentences("No. 7 is here. Come in."), ["No. 7 is here.", "Come in."]); // abbrev + real break
+  assert.deepStrictEqual(S.splitSentences("Just one line"), ["Just one line"]);                      // no terminal punctuation
+});
+
+test("lintContent (Listening): transcript-verbatim rule + spokenAs exception", () => {
+  const mk = (grp) => [{
+    id: "L", parts: [{
+      part: 1, script: [{ speaker: "man", text: "My name is Bradford. The fee is fifty pounds." }],
+      groups: [grp],
+    }],
+  }];
+  // answer present verbatim in the script -> ok
+  assert.strictEqual(S.lintContent(mk({ input: "text", wordLimit: { words: 1, numbers: 0 },
+    questions: [{ n: 1, answer: ["Bradford"] }] })).ok, true);
+  // answer NOT in the script -> fail
+  assert.strictEqual(S.lintContent(mk({ input: "text", wordLimit: { words: 1, numbers: 0 },
+    questions: [{ n: 1, answer: ["London"] }] })).ok, false);
+  // spokenAs form present -> ok even though written answer differs from spoken
+  const spelledScript = [{ id: "L", parts: [{ part: 1,
+    script: [{ speaker: "man", text: "That's B. R. A. D. F. O. R. D." }],
+    groups: [{ input: "text", wordLimit: { words: 1, numbers: 0 },
+      questions: [{ n: 1, answer: ["Bradford"], spokenAs: "B. R. A. D. F. O. R. D." }] }] }] }];
+  assert.strictEqual(S.lintContent(spelledScript).ok, true);
+  // spokenAs form absent from script -> fail
+  const spelledBad = JSON.parse(JSON.stringify(spelledScript));
+  spelledBad[0].parts[0].script[0].text = "That's something else entirely.";
+  assert.strictEqual(S.lintContent(spelledBad).ok, false);
 });
 
 test("normalize: trims, collapses whitespace, lowercases, strips edge punctuation", () => {
