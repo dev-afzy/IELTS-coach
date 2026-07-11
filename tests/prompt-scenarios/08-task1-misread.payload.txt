@@ -1,0 +1,14 @@
+PAYLOAD v1
+IELTS Academic Writing — grade strictly per criterion, no sugar-coating, then show the Band 8.5 version. [ielts-coach skill]
+
+MODE: Task 1 only (20 min) · Time used: 19:10
+TASK 1 PROMPT: The line graph below shows the number of visitors (in thousands) to three museums (A, B and C) in a city between 2000 and 2010. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.
+TASK 1 VISUAL DATA (for accuracy checking): Line graph, values in thousands of visitors, years 2000, 2005, 2010. Museum A: 80, 120, 150 (steady rise). Museum B: 140, 110, 90 (steady fall). Museum C: 100, 100, 100 (flat, unchanged all three years).
+TASK 1 ANSWER (172 words):
+The line graph illustrates how many people, in thousands, visited three different museums (A, B and C) in a city over a ten-year period from 2000 to 2010.
+
+Overall, visitor numbers to Museum A decreased significantly during the period, whereas Museum B saw a considerable rise. Museum C, meanwhile, experienced a great deal of fluctuation from year to year.
+
+In 2000, Museum A was the most popular of the three, welcoming around 150,000 visitors, but this figure fell steadily to just 80,000 by 2010. In contrast, Museum B began with only 90,000 visitors in 2000 and then climbed sharply to reach 140,000 at the end of the period, overtaking both of the other museums.
+
+Museum C started at 100,000 visitors and went up and down repeatedly throughout the decade, ending slightly higher than where it had begun. By 2010, it had become the second most visited of the three museums, having briefly been the least popular in the middle years of the period.

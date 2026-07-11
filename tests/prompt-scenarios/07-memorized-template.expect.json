@@ -1,0 +1,7 @@
+{
+  "kind": "overall",
+  "band": [5.0, 6.5],
+  "mustFlag": [
+    ["template", "memoriz", "formulaic", "learned phrase", "rote", "cliche", "clichéd", "prefabricated", "pre-learned", "memorised", "memorized"]
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "kind": "criterion",
+  "task": 1,
+  "criterion": "Task Achievement",
+  "cap": 6.5,
+  "mustFlag": [
+    ["inaccurat", "misread", "misrepresent", "incorrect", "reversed", "wrong", "does not match", "contradicts the data", "the opposite", "factually"]
+  ]
+}

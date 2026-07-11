@@ -1,0 +1,28 @@
+PAYLOAD v1
+IELTS Academic Writing — grade strictly per criterion, no sugar-coating, then show the Band 8.5 version. [ielts-coach skill]
+
+MODE: Full test (60 min) · Time used: 59:20
+TASK 1 PROMPT: The table below shows the number of gold, silver and bronze medals won by the top five countries at a recent international sporting event. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.
+TASK 1 VISUAL DATA (for accuracy checking): Table. Columns Gold, Silver, Bronze. USA 39, 41, 33. China 38, 32, 19. Japan 27, 14, 17. UK 22, 21, 22. Russia 20, 28, 23.
+TASK 1 ANSWER (163 words):
+The table shows the number of gold, silver and bronze medals that were won by the top five countries at a recent international sporting event.
+
+The USA won the most gold medals with 39, and China was very close behind with 38 gold medals. Japan won 27 gold medals, which was more than the UK with 22 and Russia with 20.
+
+For silver medals, the USA again had the highest number at 41, followed by China with 32 and Russia with 28. The UK won 21 silver medals and Japan won only 14, which was the lowest of the five countries.
+
+In the bronze medals, the USA won 33 and Russia won 23, while the UK got 22 and China got 19. Japan won 17 bronze medals.
+
+So the USA was the strongest country in the table with the most medals in every category, and Japan won the fewest silver medals of the five countries shown.
+
+TASK 2 PROMPT: In many countries, people are choosing to have children later in life. What are the reasons for this, and is it a positive or negative development?
+TASK 2 ANSWER (297 words):
+In numerous countries, it has become increasingly common for couples to start a family at a later age than previous generations did. This trend is driven by several factors, and although it carries some risks, I regard it as a largely positive development.
+
+There are two main reasons behind this shift. The most significant is the growing participation of women in higher education and the workforce. Many women now prefer to establish a stable career before taking time out to raise children, which naturally pushes parenthood into their thirties. A second reason is financial: the rising cost of housing and of raising a child means that many couples feel they must be financially secure before they can realistically start a family.
+
+In my view, this development is mostly beneficial, both for parents and for children. Older parents tend to be more emotionally mature and financially stable, which means they can offer their children a more secure and supportive upbringing. Furthermore, having already established their careers, such parents may feel less resentment about the sacrifices that raising children inevitably involves.
+
+Nevertheless, it would be wrong to ignore the drawbacks. Delaying parenthood can bring medical complications, as fertility declines with age, and some couples who wait too long may find it harder to conceive at all. There is also the concern that older parents will have less physical energy for demanding young children.
+
+On balance, however, I believe the advantages clearly outweigh these concerns. Provided that people remain aware of the biological risks involved, choosing to have children once they are emotionally and financially ready is a sensible and responsible decision, one that ultimately benefits families and society alike far more than starting a family before one is prepared for it.

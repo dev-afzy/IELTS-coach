@@ -1,0 +1,15 @@
+PAYLOAD v1
+IELTS Academic Writing — grade strictly per criterion, no sugar-coating, then show the Band 8.5 version. [ielts-coach skill]
+
+MODE: Task 2 only (40 min) · Time used: 39:05
+TASK 2 PROMPT: Some people believe that technology has made our lives more complicated. To what extent do you agree or disagree?
+TASK 2 ANSWER (256 words):
+Technology is a big part of modern life. Some people think it has made our lives more complicated. I partly agree with this idea, and in this essay I will discuss both sides.
+
+Firstly, technology can make life more complicated in some ways. For example, people receive many emails and messages every day. This can make them feel stressed and busy. Also, there are many devices to learn how to use, and this takes time. Older people especially can find new technology difficult to understand.
+
+Secondly, on the other hand, technology also makes many things easier. For example, we can pay bills online and we do not need to go to the bank. We can also talk to family in other countries by video call. These things save a lot of time and make life simpler, not harder.
+
+Finally, I think the answer depends on how people use technology. If a person uses technology in a good way, it can make life easier. But if a person uses it too much, it can make life more stressful and complicated. So people should try to have a balance.
+
+In conclusion, technology has both good and bad effects on our lives. It can make some things complicated, but it also makes many things easier. In my opinion, technology is helpful if we use it carefully and do not depend on it too much. Therefore I partly agree that technology has made our lives more complicated, but only when people do not use it in a sensible way.

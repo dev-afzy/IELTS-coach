@@ -1,0 +1,7 @@
+{
+  "kind": "overall",
+  "band": [8.0, 8.5],
+  "mustFlag": [
+    ["accurate", "accuracy", "faithful", "correctly", "matches the data", "faithfully", "precise"]
+  ]
+}

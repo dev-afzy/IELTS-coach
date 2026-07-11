@@ -1,0 +1,9 @@
+{
+  "kind": "criterion",
+  "task": 2,
+  "criterion": "Task Response",
+  "cap": 5.5,
+  "mustFlag": [
+    ["off-topic", "off topic", "does not address", "fails to address", "not answer the question", "irrelevant", "does not answer", "ignores the question", "misses the task"]
+  ]
+}

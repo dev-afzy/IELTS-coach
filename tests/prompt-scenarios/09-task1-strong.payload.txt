@@ -1,0 +1,14 @@
+PAYLOAD v1
+IELTS Academic Writing — grade strictly per criterion, no sugar-coating, then show the Band 8.5 version. [ielts-coach skill]
+
+MODE: Task 1 only (20 min) · Time used: 18:45
+TASK 1 PROMPT: The pie charts below show the proportion of energy produced from five sources in a country in 2000 and in 2020. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.
+TASK 1 VISUAL DATA (for accuracy checking): Two pie charts, percentage of total energy produced. 2000: Coal 45%, Gas 20%, Nuclear 15%, Hydro 12%, Renewables 8%. 2020: Coal 22%, Gas 28%, Nuclear 10%, Hydro 12%, Renewables 28%.
+TASK 1 ANSWER (182 words):
+The two pie charts compare the sources of energy generation in a particular country in the years 2000 and 2020, each measured as a percentage of the total.
+
+Overall, the most striking change was the country's marked shift away from coal towards gas and renewable energy, while hydroelectric power remained unchanged throughout the two decades.
+
+In 2000, coal was by far the dominant source, accounting for almost half of all energy produced at 45%. Gas supplied a fifth of the total, followed by nuclear at 15% and hydro at 12%, with renewables making up only a marginal 8%.
+
+By 2020, the picture had altered considerably. Coal's share had more than halved to just 22%, while renewables had surged to 28%, drawing level with gas, which had itself risen modestly from 20% to become the joint-largest source. Nuclear, by contrast, edged down from 15% to 10%. Hydroelectricity was the only source to hold perfectly steady, contributing an identical 12% in both years and thereby rising in relative importance as coal declined.

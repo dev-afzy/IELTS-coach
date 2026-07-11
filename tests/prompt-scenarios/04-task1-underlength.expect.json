@@ -1,0 +1,9 @@
+{
+  "kind": "criterion",
+  "task": 1,
+  "criterion": "Task Achievement",
+  "cap": 6.0,
+  "mustFlag": [
+    ["under", "118", "word count", "below the minimum", "too short", "150 word", "under-length", "underlength"]
+  ]
+}

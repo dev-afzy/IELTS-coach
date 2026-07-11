@@ -1,0 +1,12 @@
+PAYLOAD v1
+IELTS Academic Writing — grade strictly per criterion, no sugar-coating, then show the Band 8.5 version. [ielts-coach skill]
+
+MODE: Task 1 only (20 min) · Time used: 14:20
+TASK 1 PROMPT: The bar chart below shows the percentage of households in owned and rented accommodation in one country between 1980 and 2010. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.
+TASK 1 VISUAL DATA (for accuracy checking): Bar chart. Years 1980, 1990, 2000, 2010. Owned households: 55%, 62%, 69%, 73%. Rented households: 45%, 38%, 31%, 27%.
+TASK 1 ANSWER (118 words — UNDER MINIMUM):
+The bar chart compares the percentage of households that owned their home with those who rented it in one country over a thirty-year period from 1980 to 2010.
+
+Overall, home ownership rose steadily across the period, while the proportion of households in rented accommodation fell by the same amount.
+
+In 1980, 55% of households owned their home and 45% rented. Ownership then increased to 62% in 1990 and 69% in 2000. By 2010 it had reached 73%. Renting followed the opposite path, dropping from 45% to 38%, then to 31%, and finally to 27% in 2010, the lowest figure shown on the chart.

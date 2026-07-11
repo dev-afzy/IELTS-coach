@@ -1,0 +1,9 @@
+{
+  "kind": "criterion",
+  "task": 2,
+  "criterion": "Task Response",
+  "cap": 6.5,
+  "mustFlag": [
+    ["position", "stance", "fence", "does not take", "unclear", "no clear opinion", "sit on the fence", "fails to commit", "no clear position", "does not commit", "own view"]
+  ]
+}

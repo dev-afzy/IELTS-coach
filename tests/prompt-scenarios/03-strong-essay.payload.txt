@@ -1,0 +1,13 @@
+PAYLOAD v1
+IELTS Academic Writing — grade strictly per criterion, no sugar-coating, then show the Band 8.5 version. [ielts-coach skill]
+
+MODE: Task 2 only (40 min) · Time used: 38:40
+TASK 2 PROMPT: Some people think that governments should invest more in public services rather than in the arts. To what extent do you agree or disagree?
+TASK 2 ANSWER (291 words):
+When public budgets are stretched, spending on museums, theatres and galleries is often the first thing questioned, with many arguing that essential services such as healthcare and transport have a stronger claim. While I accept that core services must take priority when the two genuinely compete, I do not believe the arts should be dismissed as an expendable luxury.
+
+The case for prioritising public services is difficult to dispute. A government's first duty is to guarantee the conditions in which its citizens can live safely and productively, and hospitals, schools and reliable infrastructure are the foundation of that guarantee. When a hospital cannot replace ageing equipment, the cost is measured in lives rather than in inconvenience, so it is only reasonable that such needs are met before more discretionary spending is considered.
+
+That said, framing the arts as an indulgence misunderstands what they contribute. A well-funded cultural sector is not merely decorative; it sustains tourism, regenerates neglected urban areas and supports a substantial creative economy that returns far more than it costs. Just as importantly, access to art shapes the character of a society — a city stripped of public culture is measurably poorer in ways that no balance sheet fully captures.
+
+The sensible conclusion, then, is not to pit one against the other but to recognise that the sums involved are rarely comparable; arts funding is typically a tiny fraction of a health or transport budget. Governments should protect essential services first, but withdrawing the modest support the arts require would save little while impoverishing public life. On balance, therefore, I disagree that the arts deserve to be sidelined, and would argue that a mature society is perfectly capable of funding both.

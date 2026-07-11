@@ -1,0 +1,7 @@
+{
+  "kind": "overall",
+  "band": [5.0, 6.5],
+  "mustFlag": [
+    ["padd", "repetiti", "says little", "empty", "filler", "lacks development", "underdeveloped", "no real development", "little content"]
+  ]
+}

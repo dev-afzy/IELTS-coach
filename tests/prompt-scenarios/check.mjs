@@ -17,8 +17,11 @@ export function roundHalfTieDown(x) {
   return n / 2;
 }
 
+// Tolerate leading markdown/quote decoration models add, e.g. "**OVERALL: 6.5**".
+const OVERALL_RE = new RegExp("^[\\s>*_#-]*OVERALL:\\s*" + BAND, "mi");
+
 function parseOverall(text) {
-  const m = text.match(new RegExp("^OVERALL:\\s*" + BAND, "mi"));
+  const m = text.match(OVERALL_RE);
   return m ? parseFloat(m[1]) : null;
 }
 
@@ -28,7 +31,7 @@ function parseTaskBand(text, task) {
 }
 
 function hasWritingTokens(text) {
-  return /^OVERALL:\s/mi.test(text) || /TASK\s*[12]\s*BAND:/i.test(text);
+  return OVERALL_RE.test(text) || /TASK\s*[12]\s*BAND:/i.test(text);
 }
 
 // Find a criterion row `| name | band | reason |` whose first cell matches.
@@ -42,7 +45,8 @@ function parseCriterion(text, criterion) {
     if (cells.length < 2) continue;
     const name = cells[0].toLowerCase().replace(/[^a-z]/g, "");
     if (!name.includes(want)) continue;
-    const bm = cells[1].match(new RegExp("^" + BAND + "$"));
+    // First band-looking token in the band cell — tolerates "6.0 (capped)".
+    const bm = cells[1].match(new RegExp(BAND));
     if (bm) return parseFloat(bm[1]);
   }
   return null;
@@ -110,4 +114,16 @@ export function checkOutput(modelText, expectation) {
 
   const flagsOk = flagsSatisfied(modelText, expectation.mustFlag, reasons);
   return { pass: bandOk && flagsOk, reasons };
+}
+
+// CLI: node check.mjs <expect.json>  (model output on stdin)
+// Exit 0 = pass, 1 = fail; prints failure reasons to stdout.
+const invokedDirectly = process.argv[1] && import.meta.url.endsWith(process.argv[1].split("/").pop());
+if (invokedDirectly && process.argv[2]) {
+  const { readFileSync } = await import("node:fs");
+  const expectation = JSON.parse(readFileSync(process.argv[2], "utf8"));
+  const modelText = readFileSync(0, "utf8"); // fd 0 = stdin
+  const { pass, reasons } = checkOutput(modelText, expectation);
+  if (!pass) { process.stdout.write(reasons.join("; ")); process.exit(1); }
+  process.exit(0);
 }

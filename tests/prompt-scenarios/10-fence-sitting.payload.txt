@@ -1,0 +1,15 @@
+PAYLOAD v1
+IELTS Academic Writing — grade strictly per criterion, no sugar-coating, then show the Band 8.5 version. [ielts-coach skill]
+
+MODE: Task 2 only (40 min) · Time used: 38:00
+TASK 2 PROMPT: Some people think that the best way to reduce crime is to give criminals longer prison sentences. To what extent do you agree or disagree?
+TASK 2 ANSWER (253 words):
+Crime is a serious problem in every society, and governments are always looking for ways to reduce it. One idea that is often suggested is to give criminals longer prison sentences. This essay will look at both sides of this idea.
+
+On one hand, longer prison sentences might help to reduce crime. If criminals know that they will spend many years in prison, they may decide not to commit a crime in the first place. Also, when dangerous people are kept in prison for a long time, they cannot hurt anyone outside. So there are certainly some good points about this idea.
+
+On the other hand, longer sentences also have some problems. Prisons are expensive, and keeping people locked up for many years costs the government a lot of money. In addition, some people believe that education and job opportunities are better ways to stop crime than punishment alone. So this idea also has some weak points that we cannot ignore.
+
+There are also other factors to consider here. Some types of crime may be reduced by longer sentences, while other types may not be affected at all. It really depends on the situation, the type of crime and the country we are talking about.
+
+In conclusion, there are strong arguments both for and against giving longer prison sentences in order to reduce crime. Both sides have good points and it is quite difficult to say which one is correct. It is a very complicated issue that has no easy answer.
