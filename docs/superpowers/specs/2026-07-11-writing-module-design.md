@@ -96,9 +96,10 @@ The canonical prompt moves into the repo. The existing skill's strict-examiner c
 
 ### 1. Scoring math (official IELTS weighting)
 
-- Each task is banded independently: four criteria per task, task band = mean of its four criteria, rounded to the nearest 0.5.
-- **Full test:** overall = (Task 1 + 2 × Task 2) / 3, rounded to the nearest 0.5 — Task 2 counts double, as in the real test. The SKILL.md states this formula and the response must show the arithmetic.
+- Each task is banded independently: four criteria per task, task band = mean of its four criteria, rounded to a half band.
+- **Full test:** overall = (Task 1 + 2 × Task 2) / 3, rounded to a half band — Task 2 counts double, as in the real test. The SKILL.md states this formula and the response must show the arithmetic.
 - **Single-task payload:** the task band is the overall.
+- **Rounding function — stated identically in SKILL.md and the runner, ties included:** round to the nearest half band; **on an exact tie (…​.25 or .75), round DOWN.** This is the on-brand choice for a no-inflation tool (official IELTS rounds .25/.75 up; we deliberately do not). Concretely: criteria 7/7/7/6 → mean 6.75 → **6.5**; full-test T1 6.0 + T2 7.0 → 6.667 → **6.5**; T1 6.5 + T2 7.5 → 7.167 → **7.0**. The runner applies this exact function when checking scenario 11's arithmetic.
 
 ### 2. Fixed response format (always, in this order)
 
@@ -151,17 +152,19 @@ Twelve scripted scenarios with known target bands and known planted flaws. Scena
 | 8 | Task 1 misreading its own chart | Task 1 | Task 1 table: Task Achievement ≤6.5 | data inaccuracy named |
 | 9 | Strong Task 1 report | Task 1 | OVERALL 8.0–8.5 | data accuracy confirmed |
 | 10 | Fence-sitting opinion essay | Task 2 | Task 2 table: Task Response ≤6.5 | unclear position named |
-| 11 | Full test: weak T1 (~6.0), strong T2 (~7.5) | Full test | OVERALL = round₀.₅((T1 + 2×T2)/3) from its own task bands; weighting favors T2 | arithmetic shown |
-| 12 | Speaking Part 2 transcript, mid-level | Speaking | overall band 6.0–7.0; response follows the existing Speaking behavior (correct → band → upgrade), NOT the Writing format | (regression guard) |
+| 11 | Full test: weak T1, strong T2 | Full test | T1 BAND 5.5–6.5 **and** T2 BAND 7.0–8.0 (grader tells them apart) **and** OVERALL = round-down-tie((T1 + 2×T2)/3) from its own task bands | arithmetic shown |
+| 12 | Speaking Part 2 transcript, mid-level | Speaking | no `TASK n BAND:` / `OVERALL:` tokens present (Writing format did not leak); a band number 6.0–7.0 appears near the word "band" | (regression guard) |
 
 Each scenario is a file pair: the answer payload (exactly what the app would copy) and an expectations file (band expectation + must-flag strings).
 
 **Runner** (`tests/run-prompt-tests.sh`): for each scenario, invoke `claude -p` with the SKILL.md content + the scenario payload, with the **model version pinned via an explicit `--model` flag** (a silent model bump recalibrates every anchor). Checks per run:
 
-1. the band expectation holds — `OVERALL:` scenarios parse the verdict line; criterion-cap scenarios (4, 6, 8, 10) parse the named criterion's row from the named task's table; scenario 11 parses both `TASK n BAND:` lines and verifies the `OVERALL:` value equals the weighted formula applied to them — all against the pinned machine tokens, not prose; and
+1. the band expectation holds — `OVERALL:` scenarios parse the verdict line; criterion-cap scenarios (4, 6, 8, 10) parse the named criterion's row from the named task's table; scenario 11 parses both `TASK n BAND:` lines, checks each falls in its loose range, **and** verifies the `OVERALL:` value equals the round-down-tie weighted formula applied to them; scenario 12 asserts the Writing machine tokens are *absent* and a 6.0–7.0 band number appears near "band" — all against the pinned tokens, not prose; and
 2. every must-flag issue is named in the feedback (case-insensitive keyword match, with 2–3 accepted synonyms per flag).
 
 **Flake control:** LLM grading is stochastic, so each scenario runs **3 times**; a scenario passes if **at least 2 of 3 runs** satisfy both checks. The runner prints per-run results so a 2/3 pass is visible, not silent.
+
+**Runner ergonomics:** `./run-prompt-tests.sh` with no argument runs the full 12 × 3 = 36-call gate; `./run-prompt-tests.sh 8` runs only scenario 8 (still 3 runs) so a single rule can be re-tested cheaply while iterating on anchors before paying for the full gate.
 
 **Ship gate:** the prompt replaces the live skill only when **all twelve scenarios pass**. On failure, tighten the calibration anchors or rules and re-run. The scenario answers are written during implementation with their flaws planted deliberately (e.g., the "6.5–7.0" essay is written clean but with limited structures) so target bands are defensible.
 
