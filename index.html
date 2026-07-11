@@ -31,6 +31,14 @@
   }
   .wrap{width:100%;max-width:620px}
 
+  .nav{display:flex;gap:8px;justify-content:center;margin-bottom:16px}
+  .nav a{
+    font-family:'Fraunces',serif;font-weight:600;font-size:12px;letter-spacing:.12em;
+    text-transform:uppercase;text-decoration:none;color:var(--muted);
+    border:1px solid var(--line);border-radius:999px;padding:7px 15px;background:var(--card);
+  }
+  .nav a.active{color:var(--paper);background:var(--ink);border-color:var(--ink)}
+
   .masthead{text-align:center;margin-bottom:22px}
   .masthead .kicker{
     font-family:'Fraunces',serif;font-weight:600;letter-spacing:.35em;
@@ -203,6 +211,11 @@
 </style>
 
 <div class="wrap">
+  <nav class="nav">
+    <a href="index.html" class="active">Speaking</a>
+    <a href="writing.html">Writing</a>
+  </nav>
+
   <div class="masthead">
     <div class="kicker">IELTS · Speaking Parts 2 & 3</div>
     <h1>The Cue Card Room</h1>
