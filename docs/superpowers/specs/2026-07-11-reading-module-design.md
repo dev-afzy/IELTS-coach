@@ -151,8 +151,14 @@ Indicative table (official boundaries shift slightly per paper; the UI labels th
 | 30–32 | 7.0 | 4–5 | 2.5 |
 | 27–29 | 6.5 | 2–3 | 2.0 |
 | 23–26 | 6.0 | 1 | 1.0 |
-| 19–22 | 5.5 | 0 | 0 |
+| 19–22 | 5.5 | 0 | 1.0 |
 | 15–18 | 5.0 | | |
+
+**Band 0 vs raw 0 (stated choice, matching real-test semantics):** in IELTS, Band 0 means "did
+not attempt the test"; a candidate who sits it and scores 0 raw gets Band 1 ("non-user"). So
+`rawToBand(0) → 1.0` — any *attempted* test floors at Band 1. **Band 0 is reserved for a
+submission with zero questions answered** and is decided by the Results screen (when
+answered-count === 0 it shows "Band 0 — no answers submitted"), independent of `rawToBand`.
 
 ### Content lint (`lintContent`)
 
@@ -191,7 +197,8 @@ Mirrors `writing.html`'s three-screen structure.
   nvm node): text normalization incl. trailing punctuation; two-counter word limit incl.
   `"the 1901 act"` valid and a 3-word answer invalid; `text` variant matching (British/American,
   number/word); `single` exact match; `selectCount` partial marks + the `perQuestion` fill
-  convention; `match` exact match; **band boundaries** at raw 0, 1, 9, 10, 26/27, 32/33, 39/40;
+  convention; `match` exact match; **band boundaries** at raw 0→1.0, 1→1.0, 9, 10, 26/27, 32/33,
+  39/40 (plus the zero-attempts → Band 0 path at the Results layer);
   and `lintContent` catching each defect class (bad number sequence, key-not-in-options,
   variant-over-limit, bad location, broken multi-answer invariant).
 - **`reading.html?selftest=1`** — runs `lintContent(READING_TESTS)` over the real bank and asserts
@@ -203,6 +210,7 @@ Mirrors `writing.html`'s three-screen structure.
 | Failure | Behavior |
 |---------|----------|
 | Timer hits 0:00 | Auto-submit answered questions; unanswered scored 0; go to Results |
+| Zero questions answered | Results shows "Band 0 — no answers submitted" (did-not-attempt), bypassing `rawToBand` |
 | Page refresh mid-test | localStorage resume with confirmation (freeze-on-close semantics) |
 | Unanswered question | Scored 0; shown ✗ with the correct answer on Results |
 | Content defect | `lintContent` `console.error`s on load; `?selftest=1` fails loudly |
