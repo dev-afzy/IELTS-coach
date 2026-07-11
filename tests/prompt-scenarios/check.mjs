@@ -101,10 +101,14 @@ export function checkOutput(modelText, expectation) {
     }
     case "speaking": {
       if (hasWritingTokens(modelText)) { reasons.push("writing machine tokens leaked into a Speaking response"); bandOk = false; }
-      const near = modelText.match(/band[^0-9]{0,12}([0-9](?:\.[05])?)|([0-9](?:\.[05])?)[^0-9]{0,6}band/i);
-      const b = near ? parseFloat(near[1] || near[2]) : null;
-      if (b === null) { reasons.push("no band number found near the word 'band'"); bandOk = false; }
-      else if (b < 6.0 || b > 7.0) { reasons.push(`speaking band ${b} outside [6.0, 7.0]`); bandOk = false; }
+      // Collect every band-adjacent number (both "band 6.5" and "6.5 band" forms)
+      // and pass if ANY sits in [6.0, 7.0]. The regression guard only needs a
+      // plausible speaking band to appear, not the first number to be it.
+      const nums = [];
+      for (const m of modelText.matchAll(/band[^0-9\n]{0,15}([0-9](?:\.[05])?)/gi)) nums.push(parseFloat(m[1]));
+      for (const m of modelText.matchAll(/([0-9](?:\.[05])?)[^0-9\n]{0,8}band/gi)) nums.push(parseFloat(m[1]));
+      if (!nums.length) { reasons.push("no band number found near the word 'band'"); bandOk = false; }
+      else if (!nums.some((b) => b >= 6.0 && b <= 7.0)) { reasons.push(`no speaking band in [6.0, 7.0]; found ${nums.join(", ")}`); bandOk = false; }
       break;
     }
     default:

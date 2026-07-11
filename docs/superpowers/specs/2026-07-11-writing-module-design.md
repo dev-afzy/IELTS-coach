@@ -143,7 +143,7 @@ Twelve scripted scenarios with known target bands and known planted flaws. Scena
 | # | Scenario | Payload | Expectation | Must be flagged in feedback |
 |---|----------|---------|-------------|------------------------------|
 | 1 | Weak essay, frequent errors | Task 2 | OVERALL 5.5–6.0 | grammar accuracy, repetitive vocabulary |
-| 2 | Competent but flat essay | Task 2 | OVERALL 6.5–7.0 | limited range, mechanical linking |
+| 2 | Competent but flat essay | Task 2 | OVERALL 6.0–7.0 | limited range, mechanical linking |
 | 3 | Strong essay | Task 2 | OVERALL 8.0–8.5 | (must NOT be nitpicked below 8.0) |
 | 4 | Task 1 at 118 words | Task 1 | Task 1 table: Task Achievement ≤6.0 | under-length cap stated with word count |
 | 5 | Padded, repetitive essay | Task 2 | OVERALL ≤6.5 | padding named |

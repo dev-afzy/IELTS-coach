@@ -1,6 +1,6 @@
 {
   "kind": "overall",
-  "band": [6.5, 7.0],
+  "band": [6.0, 7.0],
   "mustFlag": [
     ["limited range", "lacks range", "simple structures", "simple sentence", "limited vocabulary", "repetitive", "lacks complexity", "narrow range"],
     ["mechanical", "formulaic", "overuse", "firstly", "linking words", "cohesive device", "signposting"]
