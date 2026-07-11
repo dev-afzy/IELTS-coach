@@ -199,6 +199,198 @@ var READING_TESTS = [
       ]
     }
   ]
+},
+
+/* ==================================================================== TEST 2 */
+{
+  id: "test-2",
+  title: "Academic Reading — Test 2",
+  passages: [
+
+    /* -------- Passage 1: The Domestication of the Horse (Q1–13) -------- */
+    {
+      number: 1,
+      title: "The Domestication of the Horse",
+      paragraphs: [
+        { label: "A", text: "For most of human history the horse was simply prey. Herds of wild horses roamed the vast grasslands of the Eurasian steppe, and for thousands of years people hunted them for their meat and hides long before anyone thought to ride one. The horse was, in evolutionary terms, a very late addition to the list of domesticated animals, arriving well after the dog, the sheep and the cow." },
+        { label: "B", text: "The oldest widely accepted evidence of taming comes from the Botai culture of northern Kazakhstan, dated to roughly 5,500 years ago. Three clues point to domestication: fatty residues left on broken pottery suggest the people were drinking mare's milk; distinctive wear on the horses' teeth matches the pressure of a bit; and chemical traces in the soil reveal the outlines of ancient corrals where animals were penned." },
+        { label: "C", text: "Once harnessed, the horse transformed human society more profoundly than almost any other animal. Hitched to chariots and later ridden into battle by cavalry, it revolutionised the way wars were fought and won. Just as importantly, it collapsed distances: messages, goods and armies could now move at a speed that reshaped trade and the reach of empires." },
+        { label: "D", text: "Because horses travelled with the people who kept them, their spread across Eurasia is closely tied to the movement of human populations. Many scholars link the rapid expansion of horse-riding groups to the spread of languages and technologies out of the steppe, though the precise connections remain the subject of energetic debate." },
+        { label: "E", text: "Genetics has recently complicated the story. Analysis of ancient DNA shows that the Botai horses were not, in fact, the ancestors of the animals we ride today; that line appears to be the origin of the wild Przewalski's horse instead. Almost all modern domestic horses descend from a different lineage that spread explosively from the western steppe about 4,200 years ago, displacing others as it went." },
+        { label: "F", text: "The horse's role has shifted again in modern times. The spread of railways and then the motor car ended its long career as a working animal, and today most horses are kept for sport and leisure rather than labour. Conservationists, meanwhile, work to protect the few genuinely wild populations that remain." }
+      ],
+      groups: [
+        {
+          input: "match", type: "Matching headings", allowReuse: false,
+          instructions: "The passage has six paragraphs, A–F. Choose the correct heading for each paragraph from the list of headings below.",
+          options: [
+            { key: "i", text: "From hunted animal to domestic servant" },
+            { key: "ii", text: "The oldest signs of taming" },
+            { key: "iii", text: "A revolution in fighting and movement" },
+            { key: "iv", text: "Travelling alongside human migrations" },
+            { key: "v", text: "Evidence hidden in the genes" },
+            { key: "vi", text: "New purposes in the modern world" },
+            { key: "vii", text: "The anatomy of the horse" },
+            { key: "viii", text: "Breeding purely for speed" },
+            { key: "ix", text: "The economics of horse racing" }
+          ],
+          questions: [
+            { n: 1, prompt: "Paragraph A", answer: "i", location: "A", justification: "Para A: the horse moved from being 'simply prey' to a domesticated animal." },
+            { n: 2, prompt: "Paragraph B", answer: "ii", location: "B", justification: "Para B: 'The oldest widely accepted evidence of taming'." },
+            { n: 3, prompt: "Paragraph C", answer: "iii", location: "C", justification: "Para C: it 'revolutionised the way wars were fought' and 'collapsed distances'." },
+            { n: 4, prompt: "Paragraph D", answer: "iv", location: "D", justification: "Para D: horses' spread is 'closely tied to the movement of human populations'." },
+            { n: 5, prompt: "Paragraph E", answer: "v", location: "E", justification: "Para E: 'Analysis of ancient DNA' rewrote the ancestry of modern horses." },
+            { n: 6, prompt: "Paragraph F", answer: "vi", location: "F", justification: "Para F: 'The horse's role has shifted again in modern times.'" }
+          ]
+        },
+        {
+          input: "single", type: "True/False/Not Given",
+          instructions: "Do the following statements agree with the information given in the passage? Write TRUE, FALSE or NOT GIVEN.",
+          questions: [
+            { n: 7, prompt: "People ate horses before they rode them.", answer: "TRUE", location: "A", justification: "Para A: people 'hunted them for their meat … long before anyone thought to ride one'." },
+            { n: 8, prompt: "The Botai people left written descriptions of how they kept horses.", answer: "NOT GIVEN", location: "B", justification: "Para B lists only archaeological evidence; writing is never mentioned." },
+            { n: 9, prompt: "The horse changed the way wars were conducted.", answer: "TRUE", location: "C", justification: "Para C: it 'revolutionised the way wars were fought and won'." },
+            { n: 10, prompt: "Most horses alive today are descended from the Botai horses.", answer: "FALSE", location: "E", justification: "Para E: Botai horses 'were not … the ancestors of the animals we ride today'." }
+          ]
+        },
+        {
+          input: "text", type: "Note completion",
+          instructions: "Complete the notes below. Choose NO MORE THAN TWO WORDS from the passage for each answer.",
+          wordLimit: { words: 2, numbers: 0 },
+          questions: [
+            { n: 11, prompt: "Evidence at Botai — residue on pottery from drinking mare's ____", answer: ["milk"], location: "B", justification: "Para B: residues suggest 'drinking mare's milk'." },
+            { n: 12, prompt: "Evidence at Botai — tooth wear caused by a ____", answer: ["bit"], location: "B", justification: "Para B: tooth wear 'matches the pressure of a bit'." },
+            { n: 13, prompt: "Evidence at Botai — soil marking the outlines of ancient ____", answer: ["corrals"], location: "B", justification: "Para B: soil reveals 'the outlines of ancient corrals'." }
+          ]
+        }
+      ]
+    },
+
+    /* -------- Passage 2: The Body Clock (Q14–26) -------- */
+    {
+      number: 2,
+      title: "The Body Clock",
+      paragraphs: [
+        { label: "A", text: "Almost every living thing keeps time. In humans, an internal clock running on a cycle of roughly twenty-four hours governs when we feel alert and when we feel sleepy. This clock is coordinated by a small cluster of cells in the brain known as the suprachiasmatic nucleus, or SCN, which is reset each day by the light entering our eyes." },
+        { label: "B", text: "The clock does much of its work through hormones. As darkness falls, the brain releases melatonin, a chemical signal that prepares the body for sleep. This system evolved under natural skies, and it is easily fooled: the bright light of screens and lamps in the evening suppresses melatonin and pushes the whole cycle later, which is one reason that late-night phone use can make falling asleep so difficult." },
+        { label: "C", text: "People are not all the same. Our genes give each of us a natural preference, or chronotype: some are 'larks' who wake and work best early, while others are 'owls' who come alive in the evening. Because school and office hours are built around early starts, they tend to suit larks, leaving owls to struggle through mornings that fight against their biology." },
+        { label: "D", text: "When the clock is disrupted, the effects reach well beyond tiredness. Shift workers and long-distance travellers, whose schedules clash with their internal time, suffer more than mere fatigue: research has linked chronic disruption, along with the jet lag that follows rapid travel across time zones, to a range of metabolic and mood problems." },
+        { label: "E", text: "Sleep is not idle time. During the night the brain consolidates the day's memories, and a network known as the glymphatic system becomes active, flushing out waste products that build up between brain cells while we are awake. Far from switching off, the sleeping brain is doing essential housekeeping." },
+        { label: "F", text: "Understanding the clock points to practical remedies. Getting bright light early in the day and dimming it at night helps keep the cycle on track, as does a consistent sleep schedule. Some schools that pushed their start times later, in line with the biology of teenagers, have reported better attendance and results — a small change working with the clock rather than against it." }
+      ],
+      groups: [
+        {
+          input: "match", type: "Summary completion (from a list)", allowReuse: false,
+          instructions: "Complete the summary using the list of words, A–G, below.",
+          options: [
+            { key: "A", text: "SCN" }, { key: "B", text: "light" }, { key: "C", text: "melatonin" },
+            { key: "D", text: "owls" }, { key: "E", text: "larks" }, { key: "F", text: "metabolism" }, { key: "G", text: "memory" }
+          ],
+          questions: [
+            { n: 14, prompt: "The body's clock is coordinated by a region of the brain called the (14)____,", answer: "A", location: "A", justification: "Para A: coordinated by 'the suprachiasmatic nucleus, or SCN'." },
+            { n: 15, prompt: "which is reset each day by (15)____.", answer: "B", location: "A", justification: "Para A: the SCN 'is reset each day by the light'." },
+            { n: 16, prompt: "As night falls the brain releases (16)____ to prepare for sleep.", answer: "C", location: "B", justification: "Para B: 'the brain releases melatonin'." },
+            { n: 17, prompt: "People who prefer the evening are called (17)____,", answer: "D", location: "C", justification: "Para C: evening people are 'owls'." },
+            { n: 18, prompt: "while morning people are called (18)____.", answer: "E", location: "C", justification: "Para C: early people are 'larks'." }
+          ]
+        },
+        {
+          input: "single", type: "Multiple choice",
+          instructions: "Choose the correct letter, A, B, C or D.",
+          options: [{ key: "A", text: "A" }, { key: "B", text: "B" }, { key: "C", text: "C" }, { key: "D", text: "D" }],
+          questions: [
+            { n: 19, prompt: "Melatonin is released mainly:", answer: "B",
+              choices: ["at midday", "when it is dark", "during exercise", "after eating"],
+              location: "B", justification: "Para B: 'As darkness falls, the brain releases melatonin'." },
+            { n: 20, prompt: "Standard school and office hours tend to suit:", answer: "A",
+              choices: ["larks", "owls", "shift workers", "travellers"],
+              location: "C", justification: "Para C: early hours 'tend to suit larks'." },
+            { n: 21, prompt: "The glymphatic system is described as:", answer: "C",
+              choices: ["storing memories", "producing melatonin", "removing waste from the brain", "controlling body temperature"],
+              location: "E", justification: "Para E: it is 'flushing out waste products' in the brain." }
+          ]
+        },
+        {
+          input: "single", type: "Multiple choice (choose TWO)", selectCount: 2,
+          instructions: "Choose TWO letters, A–E. Which TWO problems does the passage link to a disrupted body clock?",
+          options: [
+            { key: "A", text: "difficulties for shift workers" }, { key: "B", text: "improved memory" },
+            { key: "C", text: "the effects of jet lag" }, { key: "D", text: "increased height" }, { key: "E", text: "better mood" }
+          ],
+          questions: [
+            { ns: [22, 23], prompt: "Two consequences of a disrupted body clock", answer: ["A", "C"], location: "D",
+              justification: "Para D links problems for 'shift workers' and 'the jet lag' of travel to disruption; the others are not." }
+          ]
+        },
+        {
+          input: "single", type: "Yes/No/Not Given",
+          instructions: "Do the following statements agree with the claims of the writer? Write YES, NO or NOT GIVEN.",
+          questions: [
+            { n: 24, prompt: "Using screens at night can make it harder to fall asleep.", answer: "YES", location: "B", justification: "Para B: evening screen light suppresses melatonin, so 'late-night phone use can make falling asleep so difficult'." },
+            { n: 25, prompt: "A person's chronotype is decided entirely by their habits.", answer: "NO", location: "C", justification: "Para C: 'Our genes give each of us a natural preference' — it is not purely habit." },
+            { n: 26, prompt: "Later school start times have generally produced worse results.", answer: "NO", location: "F", justification: "Para F: schools with later starts 'reported better attendance and results'." }
+          ]
+        }
+      ]
+    },
+
+    /* -------- Passage 3: Green Roofs (Q27–40) -------- */
+    {
+      number: 3,
+      title: "The Return of the Green Roof",
+      paragraphs: [
+        { label: "A", text: "A green roof is a roof that is deliberately covered with living plants, grown in a layer of soil above a waterproof membrane that protects the building beneath. The idea is far from new — turf roofs kept Scandinavian houses warm for centuries — but the modern engineered version was revived and refined in Germany in the late twentieth century, from where it has spread to cities around the world." },
+        { label: "B", text: "The most immediate benefit is what a green roof does with rain. Ordinary roofs shed water instantly into drains, overwhelming them during storms, whereas a planted roof soaks up a large share of the rainfall and releases the rest slowly. In dense cities where hard surfaces dominate, this reduces the risk of the flash flooding that follows heavy downpours." },
+        { label: "C", text: "There is a thermal benefit as well. The soil and plants insulate the building, cutting the energy needed to heat it in winter and cool it in summer. On a larger scale, replacing dark, heat-absorbing roofs with vegetation across a district lowers the surrounding air temperature and eases the urban heat-island effect that makes cities noticeably hotter than the countryside around them." },
+        { label: "D", text: "Green roofs bring life back to the city, too. They offer habitat for insects, birds and other wildlife that would otherwise find little foothold in a built-up area, and they give residents access to green space in places where ground-level land is scarce and expensive — a view of plants rather than asphalt that has measurable benefits for wellbeing." },
+        { label: "E", text: "None of this is free. A green roof is considerably heavier than a bare one, so the building must be strong enough to bear it, and the higher upfront cost of construction and the need for ongoing maintenance put some owners off. Not every roof is suitable. To overcome this reluctance, a number of cities now encourage green roofs through financial incentives or, in some cases, building regulations that require them on new developments." }
+      ],
+      groups: [
+        {
+          input: "match", type: "Matching sentence endings", allowReuse: false,
+          instructions: "Complete each sentence with the correct ending, A–G, from the box below.",
+          options: [
+            { key: "A", text: "absorbs much of the rain and releases the rest slowly." },
+            { key: "B", text: "lowers the energy needed to heat and cool the building." },
+            { key: "C", text: "provides a habitat for insects and birds." },
+            { key: "D", text: "is heavier and more expensive to build." },
+            { key: "E", text: "was revived and refined in Germany." },
+            { key: "F", text: "removes the need for any maintenance." },
+            { key: "G", text: "is now required by law in every city." }
+          ],
+          questions: [
+            { n: 27, prompt: "The modern engineered green roof", answer: "E", location: "A", justification: "Para A: the modern version 'was revived and refined in Germany'." },
+            { n: 28, prompt: "During a storm, a green roof", answer: "A", location: "B", justification: "Para B: it 'soaks up a large share of the rainfall and releases the rest slowly'." },
+            { n: 29, prompt: "By insulating the building, a green roof", answer: "B", location: "C", justification: "Para C: it cuts 'the energy needed to heat it in winter and cool it in summer'." },
+            { n: 30, prompt: "For urban wildlife, a green roof", answer: "C", location: "D", justification: "Para D: it offers 'habitat for insects, birds and other wildlife'." },
+            { n: 31, prompt: "Compared with an ordinary roof, a green roof", answer: "D", location: "E", justification: "Para E: it is 'considerably heavier' with a 'higher upfront cost'." }
+          ]
+        },
+        {
+          input: "text", type: "Sentence completion",
+          instructions: "Complete the sentences below. Choose NO MORE THAN TWO WORDS from the passage for each answer.",
+          wordLimit: { words: 2, numbers: 0 },
+          questions: [
+            { n: 32, prompt: "The plants of a green roof grow in soil laid above a waterproof ____.", answer: ["membrane"], location: "A", justification: "Para A: soil sits 'above a waterproof membrane'." },
+            { n: 33, prompt: "By holding back rainwater, green roofs reduce the risk of flash ____.", answer: ["flooding"], location: "B", justification: "Para B: this 'reduces the risk of the flash flooding'." },
+            { n: 34, prompt: "Across a district, vegetation eases the urban ____ effect.", answer: ["heat-island", "heat island"], location: "C", justification: "Para C: it 'eases the urban heat-island effect'." },
+            { n: 35, prompt: "Green roofs give city residents access to valuable ____ space.", answer: ["green"], location: "D", justification: "Para D: they give 'access to green space'." },
+            { n: 36, prompt: "One drawback is the higher ____ cost of construction.", answer: ["upfront"], location: "E", justification: "Para E: 'the higher upfront cost of construction'." }
+          ]
+        },
+        {
+          input: "single", type: "True/False/Not Given",
+          instructions: "Do the following statements agree with the information given in the passage? Write TRUE, FALSE or NOT GIVEN.",
+          questions: [
+            { n: 37, prompt: "Green roofs are an entirely modern invention.", answer: "FALSE", location: "A", justification: "Para A: 'far from new — turf roofs kept Scandinavian houses warm for centuries'." },
+            { n: 38, prompt: "A green roof can reduce a building's energy use.", answer: "TRUE", location: "C", justification: "Para C: it cuts the energy needed to heat and cool the building." },
+            { n: 39, prompt: "Every roof is suitable for conversion to a green roof.", answer: "FALSE", location: "E", justification: "Para E: 'Not every roof is suitable.'" },
+            { n: 40, prompt: "Some cities use incentives or regulations to promote green roofs.", answer: "TRUE", location: "E", justification: "Para E: cities encourage them 'through financial incentives or … building regulations'." }
+          ]
+        }
+      ]
+    }
+  ]
 }
 
 ];
