@@ -7,6 +7,7 @@ strip at the top of each page.
 - **[Speaking](index.html)** — Parts 2 & 3 (cue card + follow-up discussion)
 - **[Writing](writing.html)** — Academic Task 1 & Task 2
 - **[Reading](reading.html)** — Academic, 3 passages / 40 questions, instantly self-scored
+- **[Listening](listening.html)** — 4 sections / 40 questions, browser-spoken audio, plays once, instantly self-scored
 
 ## Speaking module (`index.html`)
 
@@ -38,6 +39,18 @@ objectively right or wrong, so the app scores you instantly.
 - Ten IELTS question types (True/False/Not Given, Yes/No/Not Given, multiple choice incl. multi-answer, matching headings/information/features/sentence-endings, sentence/summary/note completion, short answer)
 - Instant raw `/40` → indicative band, then a question-by-question review: your answer vs the correct one, a one-line justification, and a jump to where it's proven in the passage
 - Content lives in `reading-content.js`; scoring/band/lint in `scorer.js` (the single source shared by the page and the unit tests)
+
+## Listening module (`listening.html`)
+
+IELTS Listening — fully offline and **self-scored**. Audio is spoken live by the browser's speech
+synthesis (no files), so use **Chrome, Edge or Safari** with sound on.
+
+- Full Test (4 sections, 40 questions) or single-section drills
+- **The recording plays once** — no pause, no replay — enforced by construction (there is no file, only a running utterance queue); one "▶ Play" gesture auto-chains all four sections with the real test's 30-second reading gaps
+- Ten question types via the same three primitives as Reading; a 1–40 palette that unlocks sections as the audio reaches them
+- Instant raw `/40` → indicative Listening band, then per-question review **and the full transcript** revealed for study
+- If you close the tab mid-recording the audio is forfeit (exam rule); your answers are kept
+- Scripts live in `listening-content.js`; scoring/band/lint in the shared `scorer.js`
 
 ## Speaking & Writing grading
 
