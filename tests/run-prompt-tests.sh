@@ -44,7 +44,9 @@ $(cat "$payload")"
 
   passes=0
   for i in $(seq 1 "$RUNS"); do
-    out="$("$CLAUDE_CMD" -p "$prompt" --model "$MODEL" 2>/dev/null)"
+    # Prompt goes in via stdin: it begins with SKILL.md's "---" frontmatter,
+    # which `-p "$prompt"` would misparse as a CLI option.
+    out="$(printf '%s' "$prompt" | "$CLAUDE_CMD" -p --model "$MODEL" 2>/dev/null)"
     if reasons="$(printf '%s' "$out" | node "$SCEN/check.mjs" "$expect")"; then
       passes=$((passes + 1)); echo "  run $i: pass"
     else
