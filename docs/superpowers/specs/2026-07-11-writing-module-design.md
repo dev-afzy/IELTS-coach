@@ -43,7 +43,8 @@ CSS is duplicated between the two pages for now; extract a shared stylesheet whe
    - Task 1 renders its visual as an **inline SVG** above the answer box.
    - Plain `<textarea>` per task: live word count, minimum indicator (150 / 250), `spellcheck="false"` (the real test has none), **paste blocked** (`onpaste` prevented — you cannot paste in the real test).
    - Countdown timer with warnings at 10:00 and 5:00 (visual highlight), **hard stop at 0:00** → auto-submit whatever exists.
-   - **Autosave** answers + remaining time + selected prompt to `localStorage` every 5 seconds. On reload with a saved session, ask "Resume your test in progress?" before restoring; discard on decline.
+   - **Timer implementation:** store an absolute deadline timestamp and derive remaining time from `deadline - now` on each tick — a decrement-based `setInterval` countdown drifts when browsers throttle background tabs.
+   - **Autosave** answers + remaining time + selected prompt to `localStorage` every 5 seconds, under a `schemaVersion` key; a saved blob with a mismatched schema version is discarded, never restored as garbage. On reload with a valid saved session, ask "Resume your test in progress?" before restoring; discard on decline. **Resume semantics: the clock freezes while the page is closed** — on resume, the new deadline is `now + saved remaining time`. (Friendlier for solo practice than a wall-clock deadline; chosen deliberately.)
 3. **Done screen** — answers, word counts, under-length warnings in the same blunt tone as the speaking page, and **Copy for grading**.
 
 ### Question banks (embedded in the page as JS constants)
@@ -61,11 +62,14 @@ CSS is duplicated between the two pages for now; extract a shared stylesheet whe
 
 The `data` field ships in the grading payload so Claude can verify the report against what the visual actually showed — misread or invented figures are a Task Achievement failure that text-only grading cannot otherwise catch.
 
+**Single source of truth per item:** the SVG and the `data` description must not be able to diverge, or "you misread the chart" becomes an app bug instead of a candidate error. For chart-type items (line, bar, pie, table) the SVG is **rendered programmatically from the `data` constant** at load time. Map and process items are hand-authored SVG/description pairs, reviewed together as a unit.
+
 **Task 2 — 15 prompts** across all five essay types: 4 opinion, 3 discussion, 3 advantages/disadvantages, 3 problem/solution, 2 two-part. Topics from the standard IELTS pool (education, technology, environment, society, health, work). Random draw per session, same as the cue cards.
 
 ### Grading payload (clipboard format)
 
 ```
+PAYLOAD v1
 IELTS Academic Writing — grade strictly per criterion, no sugar-coating,
 then show the Band 8.5 version. [ielts-coach skill]
 
@@ -80,64 +84,86 @@ TASK 2 ANSWER (267 words):
 <answer or "(no answer written)">
 ```
 
-- Word counts and UNDER MINIMUM flags are computed by the app and stamped into the payload — the grader never trusts self-reported counts.
+- The `PAYLOAD v1` version line lets a stale skill detect format drift; the SKILL.md states which payload versions it understands.
+- Word counts and UNDER MINIMUM flags are computed by the app and stamped into the payload — the grader never re-counts.
+- **Word-count algorithm (identical statement in app code and SKILL.md):** split on whitespace; a hyphenated word counts as one word; a number counts as one word; a contraction counts as one word.
 - Single-task mode omits the other task's block.
 - Clipboard failure falls back to the hidden-textarea `execCommand` copy already used in index.html.
 
 ## Grading prompt (`.claude/skills/ielts-coach/SKILL.md`)
 
-The canonical prompt moves into the repo. The existing skill's strict-examiner core is kept; these are the additions:
+The canonical prompt moves into the repo. The existing skill's strict-examiner core is kept, and its **Speaking sections are preserved verbatim** — everything below applies **only to Writing payloads**, keyed off the `IELTS Academic Writing` payload header. Speaking grading behavior does not change in this cycle (it gets its own format and test suite in the Speaking cycle); one Speaking smoke scenario in the test suite guards against gross regressions.
 
-### 1. Fixed response format (always, in this order)
+### 1. Scoring math (official IELTS weighting)
 
-1. **Verdict line** — overall band + one blunt sentence.
-2. **Per-criterion table** — the four official criteria, band each, one-line reason each.
-3. **What went well** — brief and genuine; never padded to soften the blow.
-4. **What's holding you back** — specific unsugared failures, worst first, each with quoted evidence from the answer.
-5. **The fixes** — corrections grouped by criterion: error → fix → why (pattern, not one-off).
-6. **Band 8.5 version** — full rewrite of the answer.
-7. **One thing to fix next** — the single highest-leverage item, never a list.
+- Each task is banded independently: four criteria per task, task band = mean of its four criteria, rounded to the nearest 0.5.
+- **Full test:** overall = (Task 1 + 2 × Task 2) / 3, rounded to the nearest 0.5 — Task 2 counts double, as in the real test. The SKILL.md states this formula and the response must show the arithmetic.
+- **Single-task payload:** the task band is the overall.
 
-### 2. Calibration anchors
+### 2. Fixed response format (always, in this order)
+
+For each task present in the payload:
+
+1. **Task band line** — machine token: `TASK 1 BAND: X.X` / `TASK 2 BAND: X.X`.
+2. **Per-criterion table** — fixed row shape `| <criterion name> | X.X | <one-line reason> |`, four rows, one per official criterion.
+
+Then, once:
+
+3. **Verdict line** — machine token: line begins `OVERALL: X.X`, followed by one blunt sentence. For full tests, the weighted arithmetic is shown next to it.
+4. **What went well** — brief and genuine; never padded to soften the blow.
+5. **What's holding you back** — specific unsugared failures, worst first, each with quoted evidence from the answer.
+6. **The fixes** — corrections grouped by criterion: error → fix → why (pattern, not one-off).
+7. **Band 8.5 version** — full rewrite of each answer.
+8. **One thing to fix next** — the single highest-leverage item, never a list.
+
+The machine tokens (`TASK n BAND:`, `OVERALL:`, and the table row shape) are pinned in the SKILL.md verbatim so the test runner parses fixed syntax, not prose.
+
+### 3. Calibration anchors
 
 For each criterion, 2–3 short pinned example sentences at Band 6, 7, and 8 quality. The model scores against these fixed reference points rather than its own drifting sense of "good" — the primary defense against score inflation.
 
-### 3. Task 1 accuracy checking
+### 4. Task 1 accuracy checking
 
 Grade the report against the payload's `VISUAL DATA` block. Misread or invented figures are named explicitly and cap Task Achievement.
 
-### 4. Hard rules (never break)
+### 5. Hard rules (never break) — each encoded with its exact number
 
+- **Under-length rule, stated numerically in the prompt:** Task 1 under 150 words or Task 2 under 250 words → that task's Task Achievement / Task Response is **capped at 6.0**, and the response must state the stamped word count. (House rule, chosen so the test suite asserts a rule the prompt actually encodes — not the model's mood.)
+- **Trust the stamped word count** from the payload; never re-count.
 - Never round a band up out of kindness.
-- Always state the under-length penalty with the exact word count.
 - Always flag memorized/template language.
 - Never coach thesaurus-swap vocabulary; upgrade words in context only.
+- The skill states it understands `PAYLOAD v1`; on an unknown payload version it says so instead of guessing.
 
 ## Prompt test suite (`tests/prompt-scenarios/`)
 
-Ten scripted answers with known target bands and known planted flaws:
+Twelve scripted scenarios with known target bands and known planted flaws. Scenarios 1–3, 5–7, and 10 are single-task **Task 2** payloads; 4, 8, and 9 are single-task **Task 1** payloads; 11 is a **full-test** payload; 12 is a **Speaking** transcript (regression guard only).
 
-| # | Scenario | Target band | Must be flagged in feedback |
-|---|----------|-------------|------------------------------|
-| 1 | Weak essay, frequent errors | 5.5–6.0 | grammar accuracy, repetitive vocabulary |
-| 2 | Competent but flat essay | 6.5–7.0 | limited range, mechanical linking |
-| 3 | Strong essay | 8.0–8.5 | (must NOT be nitpicked below 8.0) |
-| 4 | Task 1 at 118 words | ≤6.0 on Task Achievement | under-length penalty stated |
-| 5 | Padded, repetitive essay | ≤6.5 | padding named |
-| 6 | Off-topic essay | ≤5.5 on Task Response | off-topic named |
-| 7 | Memorized-template essay | ≤6.5 | template language named |
-| 8 | Task 1 misreading its own chart | ≤6.5 on Task Achievement | data inaccuracy named |
-| 9 | Strong Task 1 report | 8.0–8.5 | data accuracy confirmed |
-| 10 | Fence-sitting opinion essay | ≤6.5 on Task Response | unclear position named |
+| # | Scenario | Payload | Expectation | Must be flagged in feedback |
+|---|----------|---------|-------------|------------------------------|
+| 1 | Weak essay, frequent errors | Task 2 | OVERALL 5.5–6.0 | grammar accuracy, repetitive vocabulary |
+| 2 | Competent but flat essay | Task 2 | OVERALL 6.5–7.0 | limited range, mechanical linking |
+| 3 | Strong essay | Task 2 | OVERALL 8.0–8.5 | (must NOT be nitpicked below 8.0) |
+| 4 | Task 1 at 118 words | Task 1 | Task 1 table: Task Achievement ≤6.0 | under-length cap stated with word count |
+| 5 | Padded, repetitive essay | Task 2 | OVERALL ≤6.5 | padding named |
+| 6 | Off-topic essay | Task 2 | Task 2 table: Task Response ≤5.5 | off-topic named |
+| 7 | Memorized-template essay | Task 2 | OVERALL ≤6.5 | template language named |
+| 8 | Task 1 misreading its own chart | Task 1 | Task 1 table: Task Achievement ≤6.5 | data inaccuracy named |
+| 9 | Strong Task 1 report | Task 1 | OVERALL 8.0–8.5 | data accuracy confirmed |
+| 10 | Fence-sitting opinion essay | Task 2 | Task 2 table: Task Response ≤6.5 | unclear position named |
+| 11 | Full test: weak T1 (~6.0), strong T2 (~7.5) | Full test | OVERALL = round₀.₅((T1 + 2×T2)/3) from its own task bands; weighting favors T2 | arithmetic shown |
+| 12 | Speaking Part 2 transcript, mid-level | Speaking | overall band 6.0–7.0; response follows the existing Speaking behavior (correct → band → upgrade), NOT the Writing format | (regression guard) |
 
-Each scenario is a file pair: the answer payload (exactly what the app would copy) and an expectations file (target band range + must-flag strings).
+Each scenario is a file pair: the answer payload (exactly what the app would copy) and an expectations file (band expectation + must-flag strings).
 
-**Runner** (`tests/run-prompt-tests.sh`): for each scenario, invoke `claude -p` with the SKILL.md content + the scenario payload, then check:
+**Runner** (`tests/run-prompt-tests.sh`): for each scenario, invoke `claude -p` with the SKILL.md content + the scenario payload, with the **model version pinned via an explicit `--model` flag** (a silent model bump recalibrates every anchor). Checks per run:
 
-1. the band expectation holds — for range scenarios (1, 2, 3, 5, 7, 9), the overall band parsed from the verdict line is within the target range (±0.5 tolerance at range edges); for criterion-cap scenarios (4, 6, 8, 10), the named criterion's band parsed from the per-criterion table is at or below the cap (the fixed response format makes this table reliably parseable), and
+1. the band expectation holds — `OVERALL:` scenarios parse the verdict line; criterion-cap scenarios (4, 6, 8, 10) parse the named criterion's row from the named task's table; scenario 11 parses both `TASK n BAND:` lines and verifies the `OVERALL:` value equals the weighted formula applied to them — all against the pinned machine tokens, not prose; and
 2. every must-flag issue is named in the feedback (case-insensitive keyword match, with 2–3 accepted synonyms per flag).
 
-**Ship gate:** the prompt replaces the live skill only when **all ten scenarios pass**. On failure, tighten the calibration anchors or rules and re-run. The scenario answers are written during implementation with their flaws planted deliberately (e.g., the "6.5–7.0" essay is written clean but with limited structures) so target bands are defensible.
+**Flake control:** LLM grading is stochastic, so each scenario runs **3 times**; a scenario passes if **at least 2 of 3 runs** satisfy both checks. The runner prints per-run results so a 2/3 pass is visible, not silent.
+
+**Ship gate:** the prompt replaces the live skill only when **all twelve scenarios pass**. On failure, tighten the calibration anchors or rules and re-run. The scenario answers are written during implementation with their flaws planted deliberately (e.g., the "6.5–7.0" essay is written clean but with limited structures) so target bands are defensible.
 
 ## Error handling summary
 
